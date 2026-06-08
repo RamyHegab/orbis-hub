@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orbis — The IO Buddy</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#f5ede0;--cream2:#ece0cc;--cream3:#e2d2ba;
+  --white:#fdf8f2;--brown:#2c1810;--brown2:#5c3420;--brown3:#8a5c3c;--brown4:#b8896a;
+  --border:#d8c4a8;--border2:#c8b090;
+  --teal:#2d7a6e;--teal2:#3a9485;--teal3:#4db89e;--teal-bg:#e6f4f1;
+  --terra:#c8703a;--terra2:#e8844a;--terra-bg:#fdf0e6;
+  --gold:#c8940a;--gold-bg:#fdf6e0;
+  --forest:#1c2e28;--forest2:#243d35;
+  --red:#b03a2e;--red-bg:#fdf0ee;
+  --green:#2d7a4e;--green-bg:#e6f4ec;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--brown);overflow:hidden;}
+.shell{display:flex;height:100vh;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{width:210px;flex-shrink:0;background:var(--forest);display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,0.05);}
+.slogo{padding:24px 18px 20px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.lw{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:#f2e4d0;letter-spacing:-0.5px;line-height:1;}
+.ls{font-size:9px;font-weight:500;letter-spacing:4px;text-transform:uppercase;color:var(--teal3);margin-top:4px;}
+.lt{font-size:8px;color:rgba(242,228,208,0.25);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+.snav{flex:1;padding:12px 8px;overflow-y:auto;}
+.ng{font-size:8px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.18);padding:12px 10px 4px;font-weight:600;}
+.nb{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;font-size:12.5px;font-weight:500;color:rgba(242,228,208,0.45);cursor:pointer;transition:all .15s;margin-bottom:1px;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif;}
+.nb:hover{background:rgba(255,255,255,0.06);color:rgba(242,228,208,0.85);}
+.nb.active{background:rgba(77,184,158,0.14);color:#f2e4d0;}
+.nb .ni{width:16px;font-size:13px;opacity:.7;}
+.nb.dim{opacity:.2;cursor:default;pointer-events:none;}
+.ndiv{height:1px;background:rgba(255,255,255,0.05);margin:6px 10px;}
+.nbadge{margin-left:auto;background:var(--terra);color:white;font-size:9px;font-weight:700;padding:1px 5px;border-radius:20px;}
+.suser{margin:8px;padding:10px 12px;background:rgba(255,255,255,0.05);border-radius:9px;border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:8px;}
+.uav{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--terra),#8a3a14);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0;}
+.uname{font-size:11px;font-weight:600;color:#f2e4d0;}
+.urole{font-size:9px;color:rgba(242,228,208,0.3);}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{height:52px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;}
+.tb-date{font-size:12px;color:var(--brown4);}
+.tb-right{margin-left:auto;display:flex;gap:6px;}
+.tbn{width:30px;height:30px;border-radius:7px;border:1.5px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--brown3);}
+.tbn:hover{background:var(--cream);}
+
+/* HOME SCROLL */
+.home{flex:1;overflow-y:auto;padding:24px 24px 24px;}
+
+/* GREETING */
+.greeting{margin-bottom:20px;}
+.glabel{font-size:10px;text-transform:uppercase;letter-spacing:3px;color:var(--brown4);margin-bottom:4px;font-weight:500;}
+.gname{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--brown);line-height:1.1;}
+.gname em{color:var(--teal);font-style:normal;}
+.gsub{font-size:13px;color:var(--brown3);margin-top:5px;font-weight:300;}
+
+/* STATS STRIP */
+.stats-strip{display:flex;gap:10px;margin-bottom:20px;}
+.stp{display:flex;align-items:center;gap:9px;padding:10px 14px;background:var(--white);border:1px solid var(--border);border-radius:10px;flex:1;transition:all .2s;}
+.stp:hover{border-color:var(--brown4);box-shadow:0 2px 10px rgba(44,24,16,0.06);}
+.spico{font-size:18px;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.spico.t{background:var(--teal-bg);}
+.spico.r{background:var(--terra-bg);}
+.spico.g{background:var(--gold-bg);}
+.spval{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--brown);line-height:1;}
+.splabel{font-size:10px;color:var(--brown4);margin-top:1px;}
+
+/* SECTION LABELS */
+.slabel{font-size:9.5px;text-transform:uppercase;letter-spacing:2.5px;color:var(--brown4);font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.slabel::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* THREE CARDS */
+.cards-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .22s;display:flex;flex-direction:column;}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(44,24,16,0.09);border-color:var(--brown4);}
+.cband{height:4px;flex-shrink:0;}
+.cband.t{background:linear-gradient(90deg,var(--teal),var(--teal3));}
+.cband.r{background:linear-gradient(90deg,var(--terra),var(--terra2));}
+.cband.g{background:linear-gradient(90deg,var(--gold),#e8b040);}
+.cbody{padding:16px 18px 12px;flex:1;display:flex;flex-direction:column;}
+.cillus{height:72px;border-radius:8px;margin-bottom:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+.cillus.tbg{background:var(--teal-bg);}
+.cillus.rbg{background:var(--terra-bg);}
+.cillus.gbg{background:var(--gold-bg);}
+.ctitle{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--brown);margin-bottom:4px;}
+.cdesc{font-size:11.5px;color:var(--brown3);line-height:1.55;flex:1;}
+.csearch{display:flex;align-items:center;gap:6px;margin-top:12px;padding:8px 10px;background:var(--cream);border:1.5px solid var(--border);border-radius:8px;transition:border-color .15s;}
+.card:hover .csearch{border-color:var(--brown4);}
+.csi{font-size:12px;color:var(--brown4);}
+.cst{font-size:11.5px;color:var(--brown4);flex:1;}
+.csa{font-size:13px;color:var(--brown3);}
+.cfoot{padding:10px 18px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(245,237,224,0.5);}
+.cfstat{font-size:10.5px;color:var(--brown4);}
+.cfstat strong{color:var(--brown2);font-weight:600;}
+.cfbtn{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;border:1.5px solid var(--border);background:transparent;cursor:pointer;color:var(--brown2);transition:all .12s;font-family:'DM Sans',sans-serif;}
+.cfbtn.t:hover{background:var(--teal);color:white;border-color:var(--teal);}
+.cfbtn.r:hover{background:var(--terra);color:white;border-color:var(--terra);}
+.cfbtn.g:hover{background:var(--gold);color:white;border-color:var(--gold);}
+.cfbtn.t{border-color:var(--teal);color:var(--teal);}
+.cfbtn.r{border-color:var(--terra);color:var(--terra);}
+.cfbtn.g{border-color:var(--gold);color:var(--gold);}
+
+/* BOTTOM 3-COL LAYOUT */
+.bottom-grid{display:grid;grid-template-columns:220px 1fr 220px;gap:14px;}
+
+/* LEFT PANEL - Recent Actions */
+.panel{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;}
+.ph{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.ph-title{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:700;color:var(--brown);}
+.ph-link{font-size:10px;color:var(--teal);font-weight:500;cursor:pointer;}
+.ph-link:hover{text-decoration:underline;}
+.pb{flex:1;overflow-y:auto;padding:4px 0;}
+
+/* Action items */
+.action-item{display:flex;align-items:flex-start;gap:9px;padding:8px 14px;transition:background .1s;cursor:pointer;}
+.action-item:hover{background:var(--cream);}
+.adot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.adot.t{background:var(--teal);}
+.adot.r{background:var(--terra);}
+.adot.g{background:var(--gold);}
+.adot.b{background:var(--brown3);}
+.atext{flex:1;}
+.atext strong{font-size:12px;font-weight:600;color:var(--brown);}
+.atext span{font-size:11px;color:var(--brown3);display:block;margin-top:1px;}
+.atime{font-size:10px;color:var(--brown4);white-space:nowrap;}
+
+/* CENTER - World Map */
+.map-panel{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;position:relative;}
+.map-body{flex:1;position:relative;overflow:hidden;}
+#world-map{width:100%;height:100%;}
+.map-tooltip{
+  position:absolute;background:var(--forest);color:#f2e4d0;
+  padding:8px 12px;border-radius:8px;font-size:12px;pointer-events:none;
+  display:none;z-index:100;min-width:130px;
+  box-shadow:0 4px 16px rgba(0,0,0,0.2);
+}
+.mtt-country{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;margin-bottom:4px;}
+.mtt-row{display:flex;justify-content:space-between;gap:16px;font-size:11px;color:rgba(242,228,208,0.7);margin-top:2px;}
+.mtt-val{color:#f2e4d0;font-weight:600;}
+.map-legend{display:flex;align-items:center;gap:16px;padding:8px 14px;border-top:1px solid var(--border);font-size:10px;color:var(--brown4);}
+.leg-item{display:flex;align-items:center;gap:5px;}
+.leg-dot{width:10px;height:10px;border-radius:2px;}
+
+/* RIGHT PANEL - Trips */
+.trip-panel{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;}
+.trip-list{flex:1;overflow-y:auto;}
+.trip-accordion{border-bottom:1px solid var(--border);}
+.ta-header{
+  display:flex;align-items:center;gap:8px;padding:10px 14px;
+  cursor:pointer;transition:background .1s;user-select:none;
+}
+.ta-header:hover{background:var(--cream);}
+.ta-flag{font-size:16px;flex-shrink:0;}
+.ta-info{flex:1;min-width:0;}
+.ta-name{font-size:12.5px;font-weight:600;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ta-date{font-size:10px;color:var(--brown4);margin-top:1px;}
+.ta-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px;flex-shrink:0;}
+.ta-badge.plan{background:var(--teal-bg);color:var(--teal);}
+.ta-badge.draft{background:var(--cream2);color:var(--brown3);}
+.ta-badge.done{background:var(--green-bg);color:var(--green);}
+.ta-chevron{font-size:10px;color:var(--brown4);transition:transform .2s;flex-shrink:0;}
+.ta-chevron.open{transform:rotate(180deg);}
+
+/* Checklist */
+.ta-body{display:none;padding:0 14px 10px;background:var(--cream);}
+.ta-body.open{display:block;}
+.cl-title{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--brown4);font-weight:600;padding:8px 0 6px;}
+.cl-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);}
+.cl-item:last-child{border-bottom:none;}
+.cl-check{
+  width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border2);
+  flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:9px;transition:all .15s;
+}
+.cl-check.done{background:var(--teal);border-color:var(--teal);color:white;}
+.cl-check.curr{border-color:var(--terra);background:var(--terra-bg);}
+.cl-check.lock{background:var(--cream2);border-color:var(--border);cursor:default;opacity:.5;}
+.cl-text{flex:1;}
+.cl-step{font-size:12px;font-weight:500;color:var(--brown);}
+.cl-step.done-text{color:var(--brown4);text-decoration:line-through;}
+.cl-step.curr-text{color:var(--terra);font-weight:600;}
+.cl-step.lock-text{color:var(--brown4);}
+.cl-sub{font-size:10px;color:var(--brown4);margin-top:1px;}
+.cl-badge-row{display:flex;gap:4px;margin-top:4px;}
+.cl-badge{font-size:9px;padding:1px 6px;border-radius:10px;font-weight:600;}
+.cl-badge.pend{background:var(--terra-bg);color:var(--terra);}
+.cl-badge.need{background:var(--gold-bg);color:var(--gold);}
+.cl-badge.ok{background:var(--green-bg);color:var(--green);}
+
+/* Prev trips */
+.prev-section{border-top:2px solid var(--border);background:var(--cream2);}
+.prev-header{padding:8px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.prev-title{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--brown3);font-weight:600;}
+.prev-chevron{font-size:10px;color:var(--brown4);}
+.prev-body{padding:0 14px 8px;}
+.prev-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);}
+.prev-item:last-child{border-bottom:none;}
+.prev-flag{font-size:14px;}
+.prev-name{font-size:11.5px;font-weight:500;color:var(--brown2);flex:1;}
+.prev-date{font-size:10px;color:var(--brown4);}
+.prev-sum{font-size:10px;color:var(--teal);cursor:pointer;font-weight:500;}
+.prev-sum:hover{text-decoration:underline;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.greeting{animation:fadeUp .35s ease both;}
+.stats-strip{animation:fadeUp .35s .07s ease both;}
+.cards-grid{animation:fadeUp .35s .14s ease both;}
+.bottom-grid{animation:fadeUp .35s .21s ease both;}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="slogo">
+    <div class="lw">Orbis</div>
+    <div class="ls">The IO Buddy</div>
+    <div class="lt">International Office CRM</div>
+  </div>
+  <nav class="snav">
+    <div class="ng">Workspace</div>
+    <button class="nb active"><span class="ni">🏠</span> Home</button>
+    <button class="nb"><span class="ni">🏢</span> Agent Database <span class="nbadge">177</span></button>
+    <button class="nb"><span class="ni">🎓</span> Schools</button>
+    <button class="nb"><span class="ni">✈️</span> Plan a Trip</button>
+    <div class="ndiv"></div>
+    <div class="ng">Comms</div>
+    <button class="nb"><span class="ni">✉️</span> Mailing</button>
+    <button class="nb"><span class="ni">📝</span> Visit Notes</button>
+    <div class="ndiv"></div>
+    <div class="ng">Coming Soon</div>
+    <button class="nb dim"><span class="ni">✨</span> AI Reports</button>
+    <button class="nb dim"><span class="ni">📊</span> Performance</button>
+    <button class="nb dim"><span class="ni">🎓</span> Student Intake</button>
+    <div class="ndiv"></div>
+    <button class="nb dim"><span class="ni">⚙️</span> Settings</button>
+  </nav>
+  <div class="suser">
+    <div class="uav">RH</div>
+    <div><div class="uname">Ramy Hegab</div><div class="urole">Account Manager</div></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="tb-date" id="tbdate"></div>
+    <div class="tb-right">
+      <button class="tbn">🔔</button>
+      <button class="tbn">⚙️</button>
+    </div>
+  </div>
+
+  <div class="home">
+
+    <!-- GREETING -->
+    <div class="greeting">
+      <div class="glabel">Good morning</div>
+      <div class="gname">Welcome back, <em>Ramy.</em></div>
+      <div class="gsub">Here's what's happening across your agent network today.</div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-strip">
+      <div class="stp"><div class="spico t">🏢</div><div><div class="spval">177</div><div class="splabel">Active Agents</div></div></div>
+      <div class="stp"><div class="spico r">🌿</div><div><div class="spval">43</div><div class="splabel">Branch Offices</div></div></div>
+      <div class="stp"><div class="spico g">✈️</div><div><div class="spval">3</div><div class="splabel">Trips Planned</div></div></div>
+      <div class="stp"><div class="spico t">📝</div><div><div class="spval">12</div><div class="splabel">Visit Notes</div></div></div>
+      <div class="stp"><div class="spico r">🎓</div><div><div class="spval">6</div><div class="splabel">Partner Schools</div></div></div>
+    </div>
+
+    <!-- THREE CARDS -->
+    <div class="slabel">Quick Access</div>
+    <div class="cards-grid">
+      <!-- Agent DB -->
+      <div class="card">
+        <div class="cband t"></div>
+        <div class="cbody">
+          <div class="cillus tbg">
+            <svg width="180" height="66" viewBox="0 0 180 66" xmlns="http://www.w3.org/2000/svg">
+              <line x1="90" y1="33" x2="24" y2="16" stroke="#2d7a6e" stroke-width="1" stroke-dasharray="3 2" opacity=".5"/>
+              <line x1="90" y1="33" x2="156" y2="16" stroke="#2d7a6e" stroke-width="1" stroke-dasharray="3 2" opacity=".5"/>
+              <line x1="90" y1="33" x2="30" y2="54" stroke="#2d7a6e" stroke-width="1" stroke-dasharray="3 2" opacity=".5"/>
+              <line x1="90" y1="33" x2="150" y2="54" stroke="#2d7a6e" stroke-width="1" stroke-dasharray="3 2" opacity=".5"/>
+              <line x1="90" y1="33" x2="90" y2="8" stroke="#2d7a6e" stroke-width="1" stroke-dasharray="3 2" opacity=".5"/>
+              <circle cx="90" cy="33" r="9" fill="#2d7a6e" opacity=".15"/>
+              <circle cx="90" cy="33" r="5" fill="#2d7a6e" opacity=".4"/>
+              <circle cx="90" cy="33" r="2.5" fill="#2d7a6e"/>
+              <circle cx="24" cy="16" r="4.5" fill="white" stroke="#2d7a6e" stroke-width="1.5"/>
+              <circle cx="156" cy="16" r="4.5" fill="white" stroke="#2d7a6e" stroke-width="1.5"/>
+              <circle cx="30" cy="54" r="4.5" fill="white" stroke="#2d7a6e" stroke-width="1.5"/>
+              <circle cx="150" cy="54" r="4.5" fill="white" stroke="#2d7a6e" stroke-width="1.5"/>
+              <circle cx="90" cy="8" r="3.5" fill="#4db89e"/>
+              <text x="10" y="13" font-family="sans-serif" font-size="6.5" fill="#2d7a6e" font-weight="600">PK</text>
+              <text x="158" y="13" font-family="sans-serif" font-size="6.5" fill="#2d7a6e" font-weight="600">IN</text>
+              <text x="16" y="62" font-family="sans-serif" font-size="6.5" fill="#2d7a6e" font-weight="600">EGY</text>
+              <text x="144" y="62" font-family="sans-serif" font-size="6.5" fill="#2d7a6e" font-weight="600">UAE</text>
+              <text x="83" y="6" font-family="sans-serif" font-size="6.5" fill="#4db89e" font-weight="600">CN</text>
+            </svg>
+          </div>
+          <div class="ctitle">Agent Database</div>
+          <div class="cdesc">Browse all contracted agents, headquarters, branches and key contacts across every region.</div>
+          <div class="csearch"><span class="csi">⌕</span><span class="cst">Find an agent…</span><span class="csa">→</span></div>
+        </div>
+        <div class="cfoot"><div class="cfstat"><strong>177</strong> agents · <strong>43</strong> branches</div><button class="cfbtn t">Open →</button></div>
+      </div>
+      <!-- Schools -->
+      <div class="card">
+        <div class="cband r"></div>
+        <div class="cbody">
+          <div class="cillus rbg">
+            <svg width="180" height="66" viewBox="0 0 180 66" xmlns="http://www.w3.org/2000/svg">
+              <rect x="62" y="24" width="56" height="34" rx="2" fill="white" stroke="#c8703a" stroke-width="1.5"/>
+              <rect x="75" y="38" width="12" height="20" rx="1" fill="#c8703a" opacity=".2"/>
+              <rect x="93" y="38" width="12" height="20" rx="1" fill="#c8703a" opacity=".15"/>
+              <polygon points="90,10 58,26 122,26" fill="#c8703a" opacity=".65"/>
+              <line x1="72" y1="26" x2="72" y2="58" stroke="#c8703a" stroke-width="1.2" opacity=".25"/>
+              <line x1="82" y1="26" x2="82" y2="58" stroke="#c8703a" stroke-width="1.2" opacity=".25"/>
+              <line x1="98" y1="26" x2="98" y2="58" stroke="#c8703a" stroke-width="1.2" opacity=".25"/>
+              <line x1="108" y1="26" x2="108" y2="58" stroke="#c8703a" stroke-width="1.2" opacity=".25"/>
+              <line x1="90" y1="4" x2="90" y2="12" stroke="#c8703a" stroke-width="1.5"/>
+              <polygon points="90,4 100,7 90,10" fill="#e8844a" opacity=".8"/>
+              <rect x="22" y="36" width="34" height="22" rx="2" fill="white" stroke="#c8703a" stroke-width="1" opacity=".55"/>
+              <polygon points="39,28 20,38 58,38" fill="#c8703a" opacity=".35"/>
+              <rect x="124" y="36" width="34" height="22" rx="2" fill="white" stroke="#c8703a" stroke-width="1" opacity=".55"/>
+              <polygon points="141,28 122,38 160,38" fill="#c8703a" opacity=".35"/>
+              <line x1="16" y1="58" x2="164" y2="58" stroke="#c8703a" stroke-width="1" opacity=".25"/>
+              <circle cx="18" cy="54" r="5" fill="#2d7a6e" opacity=".35"/>
+              <circle cx="162" cy="54" r="5" fill="#2d7a6e" opacity=".35"/>
+            </svg>
+          </div>
+          <div class="ctitle">Schools</div>
+          <div class="cdesc">Partner universities and schools — courses, requirements, fees and briefing materials for agents.</div>
+          <div class="csearch"><span class="csi">⌕</span><span class="cst">Find a school…</span><span class="csa">→</span></div>
+        </div>
+        <div class="cfoot"><div class="cfstat"><strong>6</strong> schools · <strong>240+</strong> courses</div><button class="cfbtn r">Open →</button></div>
+      </div>
+      <!-- Plan a Trip -->
+      <div class="card">
+        <div class="cband g"></div>
+        <div class="cbody">
+          <div class="cillus gbg">
+            <svg width="180" height="66" viewBox="0 0 180 66" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="46" cy="34" rx="26" ry="20" fill="rgba(200,148,10,0.1)" stroke="rgba(200,148,10,0.18)" stroke-width="1"/>
+              <ellipse cx="118" cy="30" rx="20" ry="16" fill="rgba(200,148,10,0.1)" stroke="rgba(200,148,10,0.15)" stroke-width="1"/>
+              <ellipse cx="158" cy="40" rx="14" ry="12" fill="rgba(200,148,10,0.08)" stroke="rgba(200,148,10,0.12)" stroke-width="1"/>
+              <path d="M 32 38 Q 74 8 112 30" fill="none" stroke="#c8940a" stroke-width="2" stroke-dasharray="4 3"/>
+              <path d="M 112 30 Q 136 16 150 38" fill="none" stroke="#c8940a" stroke-width="2" stroke-dasharray="4 3"/>
+              <circle cx="32" cy="38" r="6" fill="white" stroke="#c8940a" stroke-width="1.5"/>
+              <circle cx="32" cy="38" r="2.5" fill="#c8940a"/>
+              <circle cx="112" cy="30" r="6" fill="white" stroke="#c8940a" stroke-width="1.5"/>
+              <circle cx="112" cy="30" r="2.5" fill="#c8940a"/>
+              <circle cx="150" cy="38" r="6" fill="white" stroke="#c8940a" stroke-width="1.5"/>
+              <circle cx="150" cy="38" r="2.5" fill="#c8940a"/>
+              <text x="65" y="16" font-size="11" fill="#c8940a" opacity=".9">✈</text>
+              <text x="24" y="52" font-family="sans-serif" font-size="7" fill="#c8940a" font-weight="600" text-anchor="middle">Day 1</text>
+              <text x="112" y="46" font-family="sans-serif" font-size="7" fill="#c8940a" font-weight="600" text-anchor="middle">Day 2</text>
+              <text x="152" y="54" font-family="sans-serif" font-size="7" fill="#c8940a" font-weight="600" text-anchor="middle">Day 3</text>
+            </svg>
+          </div>
+          <div class="ctitle">Plan a Trip</div>
+          <div class="cdesc">Build visit itineraries day by day — select agents by proximity, schedule meetings, write notes.</div>
+          <div class="csearch"><span class="csi">📍</span><span class="cst">Start a new itinerary…</span><span class="csa">→</span></div>
+        </div>
+        <div class="cfoot"><div class="cfstat"><strong>3</strong> upcoming · next: <strong>Oct 2026</strong></div><button class="cfbtn g">Open →</button></div>
+      </div>
+    </div>
+
+    <!-- BOTTOM GRID: Left panel | Map | Right panel -->
+    <div class="slabel">World Overview & Trips</div>
+    <div class="bottom-grid">
+
+      <!-- LEFT: Recent Actions -->
+      <div class="panel">
+        <div class="ph">
+          <div class="ph-title">Recent Actions</div>
+          <span class="ph-link">View all</span>
+        </div>
+        <div class="pb">
+          <div class="action-item">
+            <div class="adot t"></div>
+            <div class="atext"><strong>Agent Added</strong><span>AECC — Australia</span></div>
+            <div class="atime">2h ago</div>
+          </div>
+          <div class="action-item">
+            <div class="adot r"></div>
+            <div class="atext"><strong>Branch Updated</strong><span>Times Consultant, Lahore</span></div>
+            <div class="atime">4h ago</div>
+          </div>
+          <div class="action-item">
+            <div class="adot g"></div>
+            <div class="atext"><strong>Trip Created</strong><span>Pakistan Oct 2026</span></div>
+            <div class="atime">Yesterday</div>
+          </div>
+          <div class="action-item">
+            <div class="adot b"></div>
+            <div class="atext"><strong>Note Saved</strong><span>Edify Group — DHA</span></div>
+            <div class="atime">Yesterday</div>
+          </div>
+          <div class="action-item">
+            <div class="adot t"></div>
+            <div class="atext"><strong>Mail Sent</strong><span>24 financial contacts</span></div>
+            <div class="atime">2 days ago</div>
+          </div>
+          <div class="action-item">
+            <div class="adot r"></div>
+            <div class="atext"><strong>Contact Tagged</strong><span>AHZ — Financial</span></div>
+            <div class="atime">3 days ago</div>
+          </div>
+          <div class="action-item">
+            <div class="adot g"></div>
+            <div class="atext"><strong>Agreement Renewed</strong><span>AHZ until Mar 2027</span></div>
+            <div class="atime">Last week</div>
+          </div>
+          <div class="action-item">
+            <div class="adot b"></div>
+            <div class="atext"><strong>School Added</strong><span>University of Leeds</span></div>
+            <div class="atime">Last week</div>
+          </div>
+          <div class="action-item">
+            <div class="adot t"></div>
+            <div class="atext"><strong>Branch Added</strong><span>Edvoy — Islamabad</span></div>
+            <div class="atime">2 weeks ago</div>
+          </div>
+          <div class="action-item">
+            <div class="adot r"></div>
+            <div class="atext"><strong>Import CSV</strong><span>34 agents imported</span></div>
+            <div class="atime">3 weeks ago</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CENTER: World Map -->
+      <div class="map-panel">
+        <div class="ph">
+          <div class="ph-title">Agent & School Network</div>
+          <span class="ph-link" style="font-size:10px;color:var(--brown4)">Hover a country to explore</span>
+        </div>
+        <div class="map-body">
+          <div class="map-tooltip" id="mtt">
+            <div class="mtt-country" id="mtt-country"></div>
+            <div class="mtt-row"><span>Agents</span><span class="mtt-val" id="mtt-agents"></span></div>
+            <div class="mtt-row"><span>Branches</span><span class="mtt-val" id="mtt-branches"></span></div>
+            <div class="mtt-row"><span>Schools</span><span class="mtt-val" id="mtt-schools"></span></div>
+          </div>
+          <svg id="world-map" viewBox="0 0 900 440" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+            <rect width="900" height="440" fill="#eef6f4"/>
+            <!-- Simplified continent/country shapes - stylised -->
+            <!-- NORTH AMERICA -->
+            <path d="M 60 80 L 80 70 L 120 65 L 160 70 L 185 90 L 190 120 L 175 150 L 165 180 L 150 200 L 130 210 L 110 205 L 90 195 L 75 175 L 65 150 L 55 120 Z" fill="#e8dfd0" stroke="#d0c0a8" stroke-width="0.8" class="region" data-country="USA"/>
+            <!-- Canada -->
+            <path d="M 60 80 L 80 70 L 120 65 L 160 70 L 185 90 L 180 70 L 160 50 L 120 40 L 80 45 L 55 60 Z" fill="#e8dfd0" stroke="#d0c0a8" stroke-width="0.8" class="region" data-country="Canada"/>
+            <!-- Mexico -->
+            <path d="M 110 205 L 130 210 L 150 200 L 155 215 L 140 230 L 120 225 L 108 215 Z" fill="#e8dfd0" stroke="#d0c0a8" stroke-width="0.8"/>
+
+            <!-- UK -->
+            <path d="M 390 95 L 398 88 L 405 92 L 404 102 L 395 106 L 388 102 Z" fill="#b8d4c8" stroke="#2d7a6e" stroke-width="1.2" class="region hotspot" data-country="UK"/>
+
+            <!-- EUROPE -->
+            <path d="M 400 100 L 450 90 L 490 95 L 510 105 L 505 125 L 490 135 L 470 130 L 450 125 L 420 120 L 405 110 Z" fill="#e8dfd0" stroke="#d0c0a8" stroke-width="0.8" class="region" data-country="Europe"/>
+
+            <!-- EGYPT -->
+            <path d="M 490 155 L 515 150 L 530 158 L 528 178 L 510 182 L 492 174 Z" fill="#d4c8a8" stroke="#b8a880" stroke-width="0.8" class="region hotspot" data-country="Egypt"/>
+
+            <!-- NIGERIA -->
+            <path d="M 446 188 L 468 182 L 480 190 L 478 210 L 460 218 L 444 208 Z" fill="#d4c8a8" stroke="#b8a880" stroke-width="0.8" class="region hotspot" data-country="Nigeria"/>
+
+            <!-- AFRICA (rest) -->
+            <path d="M 420 155 L 445 148 L 445 188 L 444 208 L 460 218 L 478 210 L 490 225 L 485 255 L 465 270 L 445 268 L 425 258 L 415 240 L 412 215 L 415 188 L 418 165 Z" fill="#e2d5b8" stroke="#ccc0a0" stroke-width="0.8"/>
+
+            <!-- UAE/MIDDLE EAST -->
+            <path d="M 555 148 L 578 142 L 595 150 L 592 165 L 574 170 L 556 163 Z" fill="#d4c8a8" stroke="#b8a880" stroke-width="0.8" class="region hotspot" data-country="UAE"/>
+
+            <!-- TURKEY -->
+            <path d="M 510 118 L 545 112 L 560 118 L 558 130 L 540 134 L 512 130 Z" fill="#d4c8a8" stroke="#b8a880" stroke-width="0.8" class="region" data-country="Turkey"/>
+
+            <!-- IRAN/PAKISTAN -->
+            <path d="M 580 128 L 625 120 L 648 128 L 648 150 L 628 158 L 600 155 L 580 145 Z" fill="#d4c8a8" stroke="#b8a880" stroke-width="0.8" class="region" data-country="Iran"/>
+
+            <!-- PAKISTAN -->
+            <path d="M 620 135 L 650 128 L 670 135 L 672 158 L 650 165 L 624 160 Z" fill="#b8d4c8" stroke="#2d7a6e" stroke-width="1.2" class="region hotspot" data-country="Pakistan"/>
+
+            <!-- INDIA -->
+            <path d="M 648 148 L 680 140 L 700 148 L 710 170 L 705 195 L 688 210 L 668 212 L 652 200 L 645 178 L 645 160 Z" fill="#b8d4c8" stroke="#2d7a6e" stroke-width="1.2" class="region hotspot" data-country="India"/>
+
+            <!-- BANGLADESH -->
+            <path d="M 698 172 L 714 168 L 718 180 L 708 186 L 698 182 Z" fill="#b8d4c8" stroke="#2d7a6e" stroke-width="1.2" class="region hotspot" data-country="Bangladesh"/>
+
+            <!-- SRI LANKA -->
+            <circle cx="688" cy="222" r="6" fill="#b8d4c8" stroke="#2d7a6e" stroke-width="1.2" class="region hotspot" data-country="Sri Lanka"/>
+
+            <!-- NEPAL -->
+            <path d="M 660 158 L 680 154 L 682 162 L 662 165 Z" fill="#c8d8c8" stroke="#2d7a6e" stroke-width="1" class="region hotspot" data-country="Nepal"/>
+
+            <!-- CHINA -->
+            <path d="M 680 100 L 740 88 L 790 92 L 810 108 L 800 135 L 770 145 L 740 148 L 710 145 L 690 135 L 678 118 Z" fill="#c8d8c8" stroke="#2d7a6e" stroke-width="1.2" class="region hotspot" data-country="China"/>
+
+            <!-- VIETNAM -->
+            <path d="M 758 158 L 775 150 L 784 158 L 782 185 L 770 192 L 758 182 Z" fill="#c8d8c8" stroke="#2d7a6e" stroke-width="1" class="region hotspot" data-country="Vietnam"/>
+
+            <!-- RUSSIA -->
+            <path d="M 490 60 L 600 42 L 750 38 L 830 55 L 840 80 L 800 88 L 740 88 L 680 100 L 600 95 L 540 90 L 490 80 Z" fill="#e8dfd0" stroke="#d0c0a8" stroke-width="0.8"/>
+
+            <!-- SOUTH AMERICA -->
+            <path d="M 160 240 L 200 230 L 225 240 L 230 270 L 220 305 L 200 330 L 175 335 L 155 320 L 148 295 L 150 265 Z" fill="#e8dfd0" stroke="#d0c0a8" stroke-width="0.8"/>
+
+            <!-- AUSTRALIA -->
+            <path d="M 760 260 L 820 248 L 855 258 L 858 290 L 840 310 L 808 315 L 778 305 L 758 288 Z" fill="#e8dfd0" stroke="#d0c0a8" stroke-width="0.8" class="region" data-country="Australia"/>
+
+            <!-- JAPAN/KOREA -->
+            <path d="M 810 110 L 828 105 L 835 115 L 828 124 L 812 122 Z" fill="#e8dfd0" stroke="#d0c0a8" stroke-width="0.8"/>
+
+            <!-- Hotspot pulse rings for key countries -->
+            <circle cx="394" cy="97" r="14" fill="none" stroke="#2d7a6e" stroke-width="1" opacity=".3"/>
+            <circle cx="636" cy="148" r="14" fill="none" stroke="#2d7a6e" stroke-width="1" opacity=".3"/>
+            <circle cx="676" cy="176" r="18" fill="none" stroke="#2d7a6e" stroke-width="1" opacity=".3"/>
+            <circle cx="740" cy="118" r="20" fill="none" stroke="#2d7a6e" stroke-width="1" opacity=".25"/>
+
+            <!-- Legend dots on map -->
+            <circle cx="394" cy="97" r="4" fill="#2d7a6e"/>
+            <circle cx="510" cy="165" r="3" fill="#c8703a"/>
+            <circle cx="573" cy="155" r="3" fill="#c8703a"/>
+            <circle cx="636" cy="148" r="4" fill="#2d7a6e"/>
+            <circle cx="676" cy="176" r="5" fill="#2d7a6e"/>
+            <circle cx="706" cy="175" r="3" fill="#2d7a6e"/>
+            <circle cx="740" cy="118" r="5" fill="#2d7a6e"/>
+            <circle cx="769" cy="168" r="3" fill="#c8703a"/>
+            <circle cx="460" cy="200" r="3" fill="#c8703a"/>
+
+          </svg>
+        </div>
+        <div class="map-legend">
+          <div class="leg-item"><div class="leg-dot" style="background:var(--teal);border-radius:50%"></div> Has agents</div>
+          <div class="leg-item"><div class="leg-dot" style="background:var(--terra);border-radius:50%"></div> Agents only</div>
+          <div class="leg-item"><div class="leg-dot" style="background:var(--cream3)"></div> No data</div>
+          <span style="margin-left:auto;font-size:10px;color:var(--brown4)">Click country to filter agents</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: Trips Panel -->
+      <div class="trip-panel">
+        <div class="ph">
+          <div class="ph-title">Trips</div>
+          <span class="ph-link">+ New Trip</span>
+        </div>
+        <div class="trip-list" id="trip-list">
+          <!-- Trips rendered by JS -->
+        </div>
+        <div class="prev-section">
+          <div class="prev-header" onclick="togglePrev(this)">
+            <div class="prev-title">Previous Trips</div>
+            <div class="prev-chevron" id="prev-chev">▼</div>
+          </div>
+          <div class="prev-body" id="prev-body" style="display:none">
+            <div class="prev-item"><span class="prev-flag">🇵🇰</span><div class="prev-name">Pakistan — Oct 2025</div><div class="prev-date">Oct 2–3</div><span class="prev-sum">View →</span></div>
+            <div class="prev-item"><span class="prev-flag">🇮🇳</span><div class="prev-name">India — Mar 2025</div><div class="prev-date">Mar 8–14</div><span class="prev-sum">View →</span></div>
+            <div class="prev-item"><span class="prev-flag">🇳🇬</span><div class="prev-name">Nigeria — Jan 2025</div><div class="prev-date">Jan 15–19</div><span class="prev-sum">View →</span></div>
+            <div class="prev-item"><span class="prev-flag">🇨🇳</span><div class="prev-name">China — Nov 2024</div><div class="prev-date">Nov 4–10</div><span class="prev-sum">View →</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /bottom grid -->
+  </div><!-- /home -->
+</main>
+</div>
+
+<script>
+// ── DATE ──
+const d=new Date();
+document.getElementById('tbdate').textContent=d.toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+// ── TRIP DATA ──
+const trips=[
+  {flag:'🇵🇰',name:'Pakistan — Lahore & Islamabad',date:'Oct 2–5, 2026',status:'plan',
+   steps:[
+    {label:'Plan itinerary & risk assessment',sub:'Draft day-by-day visit plan',state:'done'},
+    {label:'Get approval',sub:'Submit to HoD for sign-off',state:'curr',badge:'pend'},
+    {label:'Freight required?',sub:'Do you need to ship materials?',state:'freight',freight:true},
+    {label:'Book flights & hotels',sub:'Travel logistics confirmed',state:'lock'},
+    {label:'Itinerary confirmed',sub:'Final version sent to agents',state:'lock'},
+   ]},
+  {flag:'🇮🇳',name:'India — Delhi & Mumbai',date:'Nov 10–14, 2026',status:'plan',
+   steps:[
+    {label:'Plan itinerary & risk assessment',sub:'Draft day-by-day visit plan',state:'curr',badge:'need'},
+    {label:'Get approval',sub:'Submit to HoD for sign-off',state:'lock'},
+    {label:'Freight required?',sub:'Do you need to ship materials?',state:'lock',freight:false},
+    {label:'Book flights & hotels',sub:'Travel logistics confirmed',state:'lock'},
+    {label:'Itinerary confirmed',sub:'Final version sent to agents',state:'lock'},
+   ]},
+  {flag:'🇨🇳',name:'China — Beijing & Shanghai',date:'Jan 2027',status:'draft',
+   steps:[
+    {label:'Plan itinerary & risk assessment',sub:'Draft day-by-day visit plan',state:'curr',badge:'need'},
+    {label:'Get approval',sub:'Submit to HoD for sign-off',state:'lock'},
+    {label:'Freight required?',sub:'Do you need to ship materials?',state:'lock',freight:false},
+    {label:'Book flights & hotels',sub:'Travel logistics confirmed',state:'lock'},
+    {label:'Itinerary confirmed',sub:'Final version sent to agents',state:'lock'},
+   ]},
+];
+
+function renderTrips(){
+  document.getElementById('trip-list').innerHTML=trips.map((t,ti)=>`
+    <div class="trip-accordion">
+      <div class="ta-header" onclick="toggleTrip(${ti})">
+        <span class="ta-flag">${t.flag}</span>
+        <div class="ta-info">
+          <div class="ta-name">${t.name}</div>
+          <div class="ta-date">${t.date}</div>
+        </div>
+        <span class="ta-badge ${t.status}">${t.status==='plan'?'Planned':'Draft'}</span>
+        <span class="ta-chevron" id="chev-${ti}">▼</span>
+      </div>
+      <div class="ta-body" id="tb-${ti}">
+        <div class="cl-title">Next Steps</div>
+        ${t.steps.map((s,si)=>{
+          let cc='', tc='', sc='', bc='';
+          if(s.state==='done'){cc='done';tc='done-text';}
+          else if(s.state==='curr'){cc='curr';tc='curr-text';}
+          else if(s.state==='freight'){cc='curr';tc='curr-text';}
+          else{cc='lock';tc='lock-text';}
+          const checkChar=s.state==='done'?'✓':s.state==='lock'?'🔒':'';
+          const badgeHtml=s.badge?`<div class="cl-badge-row"><span class="cl-badge ${s.badge}">${s.badge==='pend'?'Pending Approval':s.badge==='need'?'Action Needed':s.badge==='ok'?'Done':''}</span></div>`:'';
+          let freightHtml='';
+          if(s.state==='freight'&&s.freight){
+            freightHtml=`<div style="margin-top:6px;display:flex;gap:6px;">
+              <button onclick="markFreightSent(${ti})" style="font-size:10px;padding:3px 8px;border-radius:5px;border:1.5px solid var(--teal);color:var(--teal);background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;">✓ Freight Sent</button>
+              <button style="font-size:10px;padding:3px 8px;border-radius:5px;border:1.5px solid var(--border2);color:var(--brown3);background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;">No Freight</button>
+            </div>`;
+          }
+          return `<div class="cl-item">
+            <div class="cl-check ${cc}" onclick="toggleStep(${ti},${si})">${checkChar}</div>
+            <div class="cl-text">
+              <div class="cl-step ${tc}">${s.label}</div>
+              <div class="cl-sub">${s.sub}</div>
+              ${badgeHtml}${freightHtml}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function toggleTrip(i){
+  const body=document.getElementById('tb-'+i);
+  const chev=document.getElementById('chev-'+i);
+  const isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  chev.classList.toggle('open',!isOpen);
+}
+
+function toggleStep(ti,si){
+  const step=trips[ti].steps[si];
+  if(step.state==='lock') return;
+  if(step.state==='done'){step.state='curr';step.badge='need';}
+  else if(step.state==='curr'||step.state==='freight'){
+    step.state='done';step.badge=null;
+    // unlock next
+    if(trips[ti].steps[si+1]) trips[ti].steps[si+1].state=trips[ti].steps[si+1].freight?'freight':'curr';
+  }
+  renderTrips();
+  const body=document.getElementById('tb-'+ti);
+  const chev=document.getElementById('chev-'+ti);
+  if(body) body.classList.add('open');
+  if(chev) chev.classList.add('open');
+}
+
+function markFreightSent(ti){
+  const si=trips[ti].steps.findIndex(s=>s.state==='freight');
+  if(si>=0){trips[ti].steps[si].state='done';trips[ti].steps[si].badge=null;if(trips[ti].steps[si+1])trips[ti].steps[si+1].state='curr';}
+  renderTrips();
+  const body=document.getElementById('tb-'+ti);if(body)body.classList.add('open');
+  const chev=document.getElementById('chev-'+ti);if(chev)chev.classList.add('open');
+}
+
+function togglePrev(el){
+  const body=document.getElementById('prev-body');
+  const open=body.style.display!=='none';
+  body.style.display=open?'none':'block';
+  document.getElementById('prev-chev').textContent=open?'▼':'▲';
+}
+
+renderTrips();
+// Open first trip by default
+setTimeout(()=>toggleTrip(0),100);
+
+// ── WORLD MAP TOOLTIP ──
+const countryData={
+  'UK':{agents:12,branches:4,schools:3},
+  'Pakistan':{agents:28,branches:14,schools:0},
+  'India':{agents:35,branches:18,schools:0},
+  'Bangladesh':{agents:8,branches:3,schools:0},
+  'Nepal':{agents:4,branches:1,schools:0},
+  'Sri Lanka':{agents:3,branches:1,schools:0},
+  'China':{agents:22,branches:8,schools:0},
+  'Vietnam':{agents:6,branches:2,schools:0},
+  'Egypt':{agents:9,branches:4,schools:0},
+  'Nigeria':{agents:7,branches:2,schools:0},
+  'UAE':{agents:11,branches:5,schools:0},
+  'USA':{agents:2,branches:1,schools:2},
+  'Australia':{agents:4,branches:2,schools:1},
+  'Turkey':{agents:3,branches:1,schools:0},
+  'Europe':{agents:5,branches:2,schools:1},
+};
+
+const tooltip=document.getElementById('mtt');
+const mapEl=document.getElementById('world-map');
+
+mapEl.querySelectorAll('.hotspot').forEach(el=>{
+  el.style.cursor='pointer';
+  el.addEventListener('mouseenter',function(e){
+    const c=this.dataset.country;
+    const data=countryData[c];
+    if(!data) return;
+    document.getElementById('mtt-country').textContent=c;
+    document.getElementById('mtt-agents').textContent=data.agents;
+    document.getElementById('mtt-branches').textContent=data.branches;
+    document.getElementById('mtt-schools').textContent=data.schools;
+    tooltip.style.display='block';
+  });
+  el.addEventListener('mousemove',function(e){
+    const rect=mapEl.getBoundingClientRect();
+    let x=e.clientX-rect.left+12,y=e.clientY-rect.top-10;
+    if(x+140>rect.width) x-=150;
+    tooltip.style.left=x+'px';tooltip.style.top=y+'px';
+  });
+  el.addEventListener('mouseleave',function(){tooltip.style.display='none';});
+  el.addEventListener('click',function(){
+    const c=this.dataset.country;
+    alert(`Filter: Showing all agents in ${c}\n(In the full app this filters the Agent Database)`);
+  });
+});
+
+// Highlight hotspots
+mapEl.querySelectorAll('.hotspot').forEach(el=>{
+  el.addEventListener('mouseenter',function(){this.style.filter='brightness(0.9)';this.style.strokeWidth='2';});
+  el.addEventListener('mouseleave',function(){this.style.filter='';this.style.strokeWidth='';});
+});
+</script>
+</body>
+</html>

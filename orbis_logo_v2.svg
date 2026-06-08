@@ -1,0 +1,169 @@
+<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Warm parchment background -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7f0e6"/>
+      <stop offset="100%" stop-color="#ede4d6"/>
+    </linearGradient>
+
+    <!-- Globe warm fill -->
+    <radialGradient id="globeFill" cx="40%" cy="38%" r="60%">
+      <stop offset="0%" stop-color="#d4956a"/>
+      <stop offset="100%" stop-color="#a05e35"/>
+    </radialGradient>
+
+    <!-- Deep teal gradient for arcs -->
+    <linearGradient id="tealGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2d7a6e"/>
+      <stop offset="100%" stop-color="#1f5c52"/>
+    </linearGradient>
+
+    <!-- Warm gold for flight path -->
+    <linearGradient id="flightGold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#c8873a"/>
+      <stop offset="50%" stop-color="#e8a84a"/>
+      <stop offset="100%" stop-color="#c8873a"/>
+    </linearGradient>
+
+    <!-- Soft shadow on globe -->
+    <filter id="softShadow" x="-20%" y="-20%" width="150%" height="150%">
+      <feDropShadow dx="4" dy="6" stdDeviation="10" flood-color="#8a5a30" flood-opacity="0.18"/>
+    </filter>
+
+    <!-- Soft shadow for text -->
+    <filter id="textShadow" x="-5%" y="-5%" width="115%" height="130%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#8a5a30" flood-opacity="0.12"/>
+    </filter>
+
+    <!-- Clip circle -->
+    <clipPath id="globeClip">
+      <circle cx="168" cy="252" r="82"/>
+    </clipPath>
+
+    <!-- Noise texture pattern for warmth -->
+    <filter id="paper">
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feBlend in="SourceGraphic" mode="multiply" result="blend"/>
+      <feComposite in="blend" in2="SourceGraphic" operator="in"/>
+    </filter>
+  </defs>
+
+  <!-- Background — warm cream -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="16"/>
+
+  <!-- Subtle paper grain overlay -->
+  <rect width="800" height="500" fill="rgba(160,100,50,0.04)" rx="16"/>
+
+  <!-- Very faint warm rule lines for depth -->
+  <line x1="60" y1="400" x2="740" y2="400" stroke="rgba(160,100,50,0.08)" stroke-width="1"/>
+  <line x1="60" y1="100" x2="740" y2="100" stroke="rgba(160,100,50,0.06)" stroke-width="1"/>
+
+  <!-- ═══ GLOBE ═══ -->
+
+  <!-- Outer soft halo -->
+  <circle cx="168" cy="252" r="100" fill="rgba(210,149,106,0.1)"/>
+  <circle cx="168" cy="252" r="92" fill="rgba(210,149,106,0.07)"/>
+
+  <!-- Globe base -->
+  <circle cx="168" cy="252" r="82" fill="url(#globeFill)" filter="url(#softShadow)"/>
+
+  <!-- Latitude lines -->
+  <g clip-path="url(#globeClip)" opacity="0.22">
+    <ellipse cx="168" cy="252" rx="82" ry="22" fill="none" stroke="#3d2a1a" stroke-width="1"/>
+    <ellipse cx="168" cy="252" rx="82" ry="46" fill="none" stroke="#3d2a1a" stroke-width="0.8"/>
+    <ellipse cx="168" cy="252" rx="82" ry="66" fill="none" stroke="#3d2a1a" stroke-width="0.7"/>
+    <line x1="86" y1="252" x2="250" y2="252" stroke="#3d2a1a" stroke-width="1.2"/>
+  </g>
+
+  <!-- Longitude arcs -->
+  <g clip-path="url(#globeClip)" opacity="0.2">
+    <ellipse cx="168" cy="252" rx="20" ry="82" fill="none" stroke="#3d2a1a" stroke-width="0.8"/>
+    <ellipse cx="168" cy="252" rx="42" ry="82" fill="none" stroke="#3d2a1a" stroke-width="0.7"/>
+    <ellipse cx="168" cy="252" rx="62" ry="82" fill="none" stroke="#3d2a1a" stroke-width="0.6"/>
+    <line x1="168" y1="170" x2="168" y2="334" stroke="#3d2a1a" stroke-width="1.2"/>
+  </g>
+
+  <!-- Land masses — warm lighter tone -->
+  <g clip-path="url(#globeClip)" opacity="0.55">
+    <ellipse cx="154" cy="224" rx="16" ry="11" fill="#c07840"/>
+    <ellipse cx="158" cy="258" rx="13" ry="20" fill="#bd7238"/>
+    <ellipse cx="190" cy="250" rx="11" ry="9" fill="#bd7238"/>
+    <circle cx="204" cy="260" r="5" fill="#bd7238" opacity="0.7"/>
+    <ellipse cx="126" cy="244" rx="8" ry="6" fill="#c07840" opacity="0.6"/>
+  </g>
+
+  <!-- Globe highlight (light sheen top-left) -->
+  <ellipse cx="140" cy="218" rx="22" ry="16" fill="rgba(255,235,210,0.22)"/>
+
+  <!-- Globe rim -->
+  <circle cx="168" cy="252" r="82" fill="none" stroke="#8a4e20" stroke-width="1.5" opacity="0.4"/>
+
+  <!-- Flight arc — teal dashed -->
+  <path d="M 112 298 Q 168 196 226 228" fill="none" stroke="#2d7a6e" stroke-width="2.5" stroke-dasharray="5 4"/>
+  <!-- Dots -->
+  <circle cx="112" cy="298" r="5" fill="#2d7a6e"/>
+  <circle cx="226" cy="228" r="5" fill="#2d7a6e"/>
+  <!-- Plane marker at midpoint -->
+  <circle cx="168" cy="204" r="4" fill="#e8a84a" stroke="white" stroke-width="1.5"/>
+
+  <!-- ═══ WORDMARK ═══ -->
+
+  <!-- ORBIS — warm dark brown, editorial serif feel -->
+  <text
+    x="284" y="248"
+    font-family="'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif"
+    font-size="96"
+    font-weight="700"
+    letter-spacing="-2"
+    fill="#2e1a0e"
+    filter="url(#textShadow)"
+  >ORBIS</text>
+
+  <!-- Warm terracotta rule -->
+  <rect x="284" y="260" width="400" height="2" fill="#c8873a" opacity="0.6" rx="1"/>
+
+  <!-- THE IO BUDDY — teal, spaced, friendly weight -->
+  <text
+    x="289" y="300"
+    font-family="'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif"
+    font-size="21"
+    font-weight="600"
+    letter-spacing="7"
+    fill="#2d7a6e"
+  >THE IO BUDDY</text>
+
+  <!-- Tagline -->
+  <text
+    x="289" y="338"
+    font-family="'Gill Sans', 'Gill Sans MT', Calibri, sans-serif"
+    font-size="12.5"
+    font-weight="400"
+    letter-spacing="3.5"
+    fill="#9a7a60"
+  >INTERNATIONAL OFFICE CRM</text>
+
+  <!-- ═══ DECORATIVE ELEMENTS ═══ -->
+
+  <!-- Small compass rose bottom right — hand-drawn feel -->
+  <g transform="translate(700, 390)" opacity="0.2">
+    <line x1="0" y1="-22" x2="0" y2="22" stroke="#2e1a0e" stroke-width="1.5"/>
+    <line x1="-22" y1="0" x2="22" y2="0" stroke="#2e1a0e" stroke-width="1.5"/>
+    <line x1="-15" y1="-15" x2="15" y2="15" stroke="#2e1a0e" stroke-width="0.8"/>
+    <line x1="15" y1="-15" x2="-15" y2="15" stroke="#2e1a0e" stroke-width="0.8"/>
+    <circle cx="0" cy="0" r="4" fill="#2e1a0e"/>
+    <polygon points="0,-22 -5,-8 0,-12 5,-8" fill="#2e1a0e"/>
+    <text x="-3" y="-26" font-family="Georgia,serif" font-size="10" fill="#2e1a0e" font-weight="700">N</text>
+  </g>
+
+  <!-- Warm border rule top and bottom -->
+  <rect x="42" y="42" width="716" height="2" fill="#c8873a" opacity="0.25" rx="1"/>
+  <rect x="42" y="456" width="716" height="2" fill="#c8873a" opacity="0.25" rx="1"/>
+
+  <!-- Corner ornaments -->
+  <text x="46" y="70" font-family="Georgia,serif" font-size="18" fill="rgba(160,100,50,0.2)">✦</text>
+  <text x="736" y="70" font-family="Georgia,serif" font-size="18" fill="rgba(160,100,50,0.2)">✦</text>
+  <text x="46" y="458" font-family="Georgia,serif" font-size="18" fill="rgba(160,100,50,0.2)">✦</text>
+  <text x="736" y="458" font-family="Georgia,serif" font-size="18" fill="rgba(160,100,50,0.2)">✦</text>
+
+</svg>

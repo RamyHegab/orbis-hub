@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentOrbit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f4f0;
+  --white: #ffffff;
+  --ink: #0e0e0e;
+  --ink2: #3a3a3a;
+  --ink3: #7a7a7a;
+  --ink4: #b8b8b8;
+  --border: #e4e2dc;
+  --border2: #d0cdc5;
+  --blue: #1a56f0;
+  --blue-light: #eef1fd;
+  --blue-mid: #c4cefc;
+  --green: #0a7c5c;
+  --green-light: #e6f5f0;
+  --amber: #c97b00;
+  --amber-light: #fdf3e0;
+  --red: #c0392b;
+  --red-light: #fdf0ee;
+  --purple: #6b21a8;
+  --purple-light: #f3e8ff;
+  --sidebar-w: 220px;
+  --topbar-h: 60px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--ink); display: flex; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w); background: var(--ink); color: #fff;
+  display: flex; flex-direction: column; flex-shrink: 0;
+  position: relative; z-index: 10;
+}
+.sidebar-logo {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.logo-text {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 20px; font-weight: 700; letter-spacing: -0.5px;
+  color: #fff;
+}
+.logo-text em { color: #5b8df5; font-style: normal; }
+.logo-tagline { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 3px; letter-spacing: 0.8px; text-transform: uppercase; }
+
+.sidebar-nav { flex: 1; padding: 14px 10px; }
+.nav-group-label {
+  font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px;
+  color: rgba(255,255,255,0.25); padding: 12px 10px 6px; font-weight: 600;
+}
+.nav-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 8px; cursor: pointer;
+  font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.55);
+  transition: all 0.15s; margin-bottom: 1px; border: none; background: none;
+  width: 100%; text-align: left; font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.nav-btn:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.9); }
+.nav-btn.active { background: rgba(91,141,245,0.18); color: #fff; }
+.nav-btn .n-icon { width: 18px; opacity: 0.7; font-size: 14px; }
+.nav-btn.active .n-icon { opacity: 1; }
+.nav-btn .n-badge {
+  margin-left: auto; background: var(--blue); color: white;
+  font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 20px;
+}
+.nav-btn.dim { opacity: 0.3; cursor: default; pointer-events: none; }
+
+.sidebar-user {
+  margin: 10px; padding: 12px; background: rgba(255,255,255,0.06);
+  border-radius: 10px; display: flex; align-items: center; gap: 10px;
+}
+.user-av {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, #5b8df5, #a78bfa);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: white; flex-shrink: 0;
+}
+.user-av-name { font-size: 12px; font-weight: 600; color: white; }
+.user-av-role { font-size: 10px; color: rgba(255,255,255,0.35); }
+
+/* ── MAIN ── */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+.topbar {
+  height: var(--topbar-h); background: var(--white); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 28px; gap: 16px; flex-shrink: 0;
+}
+.topbar-title { font-family: 'Clash Display', sans-serif; font-size: 17px; font-weight: 600; color: var(--ink); }
+.topbar-breadcrumb {
+  display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink3);
+}
+.breadcrumb-sep { color: var(--ink4); }
+.breadcrumb-current { color: var(--ink); font-weight: 600; }
+.topbar-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
+  border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+  border: none; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn-primary { background: var(--ink); color: white; }
+.btn-primary:hover { background: #222; }
+.btn-blue { background: var(--blue); color: white; }
+.btn-blue:hover { background: #1447d4; }
+.btn-outline { background: transparent; color: var(--ink2); border: 1.5px solid var(--border2); }
+.btn-outline:hover { background: var(--bg); border-color: var(--ink3); }
+.btn-ghost { background: transparent; color: var(--ink3); border: none; }
+.btn-ghost:hover { color: var(--ink); background: var(--bg); border-radius: 6px; }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-xs { padding: 4px 9px; font-size: 11px; border-radius: 6px; }
+.btn-green { background: var(--green); color: white; }
+.btn-green:hover { background: #096b4e; }
+.btn-purple { background: var(--purple); color: white; }
+
+/* ── CONTENT ── */
+.content { flex: 1; overflow: hidden; display: flex; }
+.view { display: none; flex: 1; overflow: hidden; flex-direction: column; }
+.view.active { display: flex; }
+
+/* ══════════════════════════════
+   AGENTS VIEW
+══════════════════════════════ */
+.agents-view { display: flex; flex: 1; overflow: hidden; }
+
+/* Agent list panel */
+.agent-list-panel {
+  width: 360px; flex-shrink: 0; border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; background: var(--white);
+}
+.alp-toolbar {
+  padding: 16px; border-bottom: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.search-wrap { position: relative; }
+.search-wrap input {
+  width: 100%; padding: 9px 12px 9px 36px; border-radius: 8px;
+  border: 1.5px solid var(--border); background: var(--bg);
+  font-size: 13px; color: var(--ink); font-family: 'Plus Jakarta Sans', sans-serif;
+  outline: none; transition: border-color 0.15s;
+}
+.search-wrap input:focus { border-color: var(--blue); background: white; }
+.search-wrap input::placeholder { color: var(--ink4); }
+.search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--ink4); font-size: 14px; }
+.filter-row { display: flex; gap: 6px; }
+.chip-filter {
+  padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+  border: 1.5px solid var(--border); background: transparent; cursor: pointer;
+  color: var(--ink3); transition: all 0.12s; font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.chip-filter:hover { border-color: var(--blue); color: var(--blue); }
+.chip-filter.active { background: var(--blue); color: white; border-color: var(--blue); }
+.alp-count { font-size: 11px; color: var(--ink4); padding: 0 16px 10px; }
+
+.agent-list { flex: 1; overflow-y: auto; }
+.agent-row {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s;
+  position: relative;
+}
+.agent-row:hover { background: var(--bg); }
+.agent-row.active { background: var(--blue-light); border-left: 3px solid var(--blue); }
+.agent-row-avatar {
+  width: 38px; height: 38px; border-radius: 10px; background: var(--bg);
+  border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center;
+  font-family: 'Clash Display', sans-serif; font-size: 13px; font-weight: 700;
+  color: var(--ink2); flex-shrink: 0; text-transform: uppercase;
+}
+.agent-row-info { flex: 1; min-width: 0; }
+.agent-row-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.agent-row-sub { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+.agent-row-right { flex-shrink: 0; text-align: right; }
+.agent-row-country { font-size: 11px; color: var(--ink3); }
+.branch-pill {
+  display: inline-block; margin-top: 3px; padding: 2px 7px; border-radius: 20px;
+  font-size: 10px; font-weight: 600; background: var(--blue-light); color: var(--blue);
+}
+
+/* Agent detail panel */
+.agent-detail-panel {
+  flex: 1; overflow: hidden; display: flex; flex-direction: column;
+  background: var(--bg);
+}
+.adp-empty {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: var(--ink4); gap: 10px;
+}
+.adp-empty-icon { font-size: 40px; opacity: 0.3; }
+.adp-empty-text { font-size: 14px; }
+
+.adp-header {
+  background: white; border-bottom: 1px solid var(--border); padding: 20px 24px;
+  display: flex; align-items: flex-start; justify-content: space-between;
+}
+.adp-name { font-family: 'Clash Display', sans-serif; font-size: 22px; font-weight: 700; }
+.adp-legal { font-size: 12px; color: var(--ink3); margin-top: 3px; }
+.adp-meta { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+}
+.tag-green { background: var(--green-light); color: var(--green); }
+.tag-blue { background: var(--blue-light); color: var(--blue); }
+.tag-amber { background: var(--amber-light); color: var(--amber); }
+.tag-red { background: var(--red-light); color: var(--red); }
+.tag-purple { background: var(--purple-light); color: var(--purple); }
+.tag-gray { background: var(--bg); color: var(--ink3); border: 1px solid var(--border); }
+
+.adp-tabs {
+  display: flex; background: white; border-bottom: 1px solid var(--border); padding: 0 24px;
+}
+.adp-tab {
+  padding: 12px 16px; font-size: 13px; font-weight: 600; color: var(--ink3);
+  cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s;
+  margin-bottom: -1px;
+}
+.adp-tab:hover { color: var(--ink); }
+.adp-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+.adp-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+
+/* Info cards */
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.info-card {
+  background: white; border: 1px solid var(--border); border-radius: 10px; padding: 14px;
+}
+.info-card-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--ink4); font-weight: 600; margin-bottom: 4px; }
+.info-card-value { font-size: 14px; font-weight: 600; color: var(--ink); }
+.info-card-sub { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+.info-card.full { grid-column: 1 / -1; }
+
+/* Contact card */
+.contact-card {
+  background: white; border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px;
+}
+.contact-av {
+  width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700;
+  color: var(--blue); flex-shrink: 0;
+}
+.contact-info { flex: 1; min-width: 0; }
+.contact-name { font-size: 13px; font-weight: 600; }
+.contact-role { font-size: 11px; color: var(--ink3); margin-top: 1px; }
+.contact-detail { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+.contact-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.contact-actions { display: flex; gap: 6px; }
+
+/* Branch card */
+.branch-card {
+  background: white; border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 16px; margin-bottom: 10px;
+}
+.bc-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+.bc-name { font-size: 13px; font-weight: 700; }
+.bc-loc { font-size: 12px; color: var(--ink3); margin-top: 2px; }
+.bc-contact { display: flex; align-items: center; gap: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.bc-av { width: 28px; height: 28px; border-radius: 50%; background: var(--bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--ink3); }
+.bc-cname { font-size: 12px; font-weight: 600; }
+.bc-crole { font-size: 11px; color: var(--ink3); }
+.bc-actions { display: flex; gap: 6px; margin-left: auto; }
+.map-link { color: var(--blue); text-decoration: none; font-size: 11px; font-weight: 600; }
+.map-link:hover { text-decoration: underline; }
+
+/* Countries strip */
+.countries-strip { display: flex; flex-wrap: wrap; gap: 5px; }
+.ctag {
+  padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 500;
+  background: var(--bg); color: var(--ink2); border: 1px solid var(--border);
+}
+
+/* Section title */
+.sec-title {
+  font-family: 'Clash Display', sans-serif; font-size: 13px; font-weight: 600;
+  color: var(--ink); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+}
+.sec-title span { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; color: var(--ink4); font-weight: 400; }
+
+/* ══════════════════════════════
+   ITINERARY VIEW
+══════════════════════════════ */
+.itinerary-view { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+.itin-toolbar {
+  background: white; border-bottom: 1px solid var(--border);
+  padding: 14px 24px; display: flex; gap: 12px; align-items: center; flex-shrink: 0;
+}
+.trip-name-input {
+  font-family: 'Clash Display', sans-serif; font-size: 18px; font-weight: 600;
+  border: none; outline: none; background: transparent; color: var(--ink);
+  flex: 1;
+}
+.itin-body { flex: 1; overflow: hidden; display: flex; }
+.itin-left { flex: 1; overflow-y: auto; padding: 20px 24px; }
+.itin-right {
+  width: 300px; flex-shrink: 0; background: white; border-left: 1px solid var(--border);
+  overflow-y: auto; padding: 18px;
+}
+
+.trip-stats { display: flex; gap: 10px; margin-bottom: 20px; }
+.trip-stat {
+  flex: 1; background: white; border: 1px solid var(--border); border-radius: 10px;
+  padding: 12px 14px;
+}
+.ts-val { font-family: 'Clash Display', sans-serif; font-size: 20px; font-weight: 700; color: var(--ink); }
+.ts-label { font-size: 10px; color: var(--ink4); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px; }
+
+.day-block { margin-bottom: 24px; }
+.day-header {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+}
+.day-num {
+  width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Clash Display', sans-serif; font-size: 12px; font-weight: 700; flex-shrink: 0;
+}
+.day-label-text { font-family: 'Clash Display', sans-serif; font-size: 15px; font-weight: 600; }
+.day-date-text { font-size: 12px; color: var(--ink3); margin-left: 4px; }
+
+.visit-block {
+  background: white; border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px 16px; margin-bottom: 8px; margin-left: 44px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.visit-block:hover { border-color: var(--blue-mid); box-shadow: 0 2px 12px rgba(26,86,240,0.07); }
+.vb-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.vb-time { font-size: 12px; font-weight: 700; color: var(--blue); font-family: monospace; }
+.vb-type { padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.vb-visit { background: var(--blue-light); color: var(--blue); }
+.vb-fair { background: var(--amber-light); color: var(--amber); }
+.vb-dinner { background: var(--purple-light); color: var(--purple); }
+.vb-status { margin-left: auto; }
+.vb-agent { font-size: 14px; font-weight: 700; }
+.vb-branch { font-size: 12px; color: var(--ink3); margin-top: 2px; }
+.vb-notes {
+  margin-top: 10px; padding: 10px 12px; background: var(--bg);
+  border-radius: 8px; font-size: 12px; color: var(--ink2); line-height: 1.6;
+  border-left: 3px solid var(--blue-mid);
+}
+.vb-actions { display: flex; gap: 6px; margin-top: 10px; }
+
+.add-stop {
+  margin-left: 44px; border: 1.5px dashed var(--border2); border-radius: 10px;
+  padding: 10px; text-align: center; color: var(--ink4); font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s; margin-bottom: 8px;
+}
+.add-stop:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+
+/* Right form */
+.form-title { font-family: 'Clash Display', sans-serif; font-size: 14px; font-weight: 600; margin-bottom: 14px; }
+.form-field { margin-bottom: 12px; }
+.form-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--ink3); margin-bottom: 5px; display: block; }
+.form-input, .form-select, .form-textarea {
+  width: 100%; padding: 8px 10px; border: 1.5px solid var(--border);
+  border-radius: 8px; font-size: 13px; color: var(--ink);
+  font-family: 'Plus Jakarta Sans', sans-serif; outline: none; background: var(--bg);
+  transition: border-color 0.15s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--blue); background: white; }
+.form-textarea { resize: vertical; min-height: 70px; }
+
+.branch-pick-item {
+  display: flex; align-items: center; gap: 8px; padding: 9px 10px;
+  background: var(--bg); border: 1.5px solid var(--border); border-radius: 8px;
+  margin-bottom: 6px; cursor: pointer; transition: all 0.12s;
+}
+.branch-pick-item:hover, .branch-pick-item.sel { border-color: var(--blue); background: var(--blue-light); }
+.bpi-check {
+  width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border2);
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 9px;
+  transition: all 0.12s;
+}
+.branch-pick-item.sel .bpi-check { background: var(--blue); border-color: var(--blue); color: white; }
+.bpi-info { flex: 1; min-width: 0; }
+.bpi-name { font-size: 12px; font-weight: 600; }
+.bpi-loc { font-size: 11px; color: var(--ink3); }
+.distance-badge { font-size: 10px; color: var(--green); font-weight: 600; background: var(--green-light); padding: 1px 6px; border-radius: 10px; }
+
+/* ══════════════════════════════
+   MAIL VIEW
+══════════════════════════════ */
+.mail-view { flex: 1; overflow: hidden; display: flex; }
+.mail-list-panel {
+  width: 340px; flex-shrink: 0; background: white; border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+}
+.mlp-top { padding: 16px; border-bottom: 1px solid var(--border); }
+.mlp-title { font-family: 'Clash Display', sans-serif; font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+.segment-tabs { display: flex; gap: 4px; }
+.seg-tab {
+  flex: 1; padding: 6px 8px; border-radius: 7px; font-size: 11px; font-weight: 600;
+  text-align: center; cursor: pointer; border: 1.5px solid var(--border);
+  color: var(--ink3); transition: all 0.12s; font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.seg-tab:hover { border-color: var(--blue); color: var(--blue); }
+.seg-tab.active { background: var(--ink); color: white; border-color: var(--ink); }
+.mail-contact-list { flex: 1; overflow-y: auto; }
+.mail-contact-item {
+  padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer;
+  display: flex; align-items: flex-start; gap: 10px; transition: background 0.1s;
+}
+.mail-contact-item:hover { background: var(--bg); }
+.mail-contact-item.active { background: var(--blue-light); border-left: 3px solid var(--blue); }
+.mci-av { width: 34px; height: 34px; border-radius: 50%; background: var(--bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--ink2); flex-shrink: 0; }
+.mci-info { flex: 1; min-width: 0; }
+.mci-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mci-agent { font-size: 11px; color: var(--ink3); }
+.mci-tags { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 5px; }
+.mci-sel { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid var(--border2); flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; }
+.mci-sel.checked { background: var(--blue); border-color: var(--blue); color: white; }
+
+.mail-compose {
+  flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg);
+}
+.mc-header {
+  background: white; border-bottom: 1px solid var(--border); padding: 20px 24px;
+  display: flex; align-items: center; gap: 12px;
+}
+.mc-title { font-family: 'Clash Display', sans-serif; font-size: 16px; font-weight: 600; }
+.mc-recipients { font-size: 12px; color: var(--ink3); }
+.mc-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+.compose-card {
+  background: white; border: 1px solid var(--border); border-radius: 12px;
+  padding: 20px; margin-bottom: 14px;
+}
+.compose-field { margin-bottom: 14px; }
+.compose-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--ink3); margin-bottom: 6px; display: block; }
+.compose-input {
+  width: 100%; padding: 9px 12px; border: 1.5px solid var(--border);
+  border-radius: 8px; font-size: 13px; color: var(--ink);
+  font-family: 'Plus Jakarta Sans', sans-serif; outline: none; background: var(--bg);
+}
+.compose-input:focus { border-color: var(--blue); background: white; }
+.compose-textarea {
+  width: 100%; min-height: 160px; padding: 12px; border: 1.5px solid var(--border);
+  border-radius: 8px; font-size: 13px; color: var(--ink);
+  font-family: 'Plus Jakarta Sans', sans-serif; outline: none; resize: vertical; background: var(--bg);
+  line-height: 1.6;
+}
+.compose-textarea:focus { border-color: var(--blue); background: white; }
+.restriction-notice {
+  display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px;
+  background: var(--amber-light); border: 1px solid #fcd97a; border-radius: 8px;
+  font-size: 12px; color: var(--amber); margin-bottom: 14px;
+}
+.lock-notice {
+  display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px;
+  background: var(--purple-light); border: 1px solid #d8b4fe; border-radius: 8px;
+  font-size: 12px; color: var(--purple); margin-bottom: 14px;
+}
+
+/* ══════════════════════════════
+   NOTES + REPORTS (minimal)
+══════════════════════════════ */
+.notes-view { flex: 1; display: flex; overflow: hidden; }
+.notes-sidebar { width: 280px; flex-shrink: 0; background: white; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+.ns-header { padding: 16px; border-bottom: 1px solid var(--border); font-family: 'Clash Display', sans-serif; font-size: 15px; font-weight: 600; }
+.note-item { padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+.note-item:hover { background: var(--bg); }
+.note-item.active { background: var(--blue-light); border-left: 3px solid var(--blue); }
+.ni-agent { font-size: 13px; font-weight: 600; }
+.ni-date { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+.ni-preview { font-size: 11px; color: var(--ink3); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.notes-editor { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.ne-header { padding: 18px 24px; background: white; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; }
+.ne-title { font-family: 'Clash Display', sans-serif; font-size: 16px; font-weight: 600; }
+.ne-meta { font-size: 12px; color: var(--ink3); margin-top: 3px; }
+.ne-textarea { flex: 1; border: none; outline: none; padding: 20px 24px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; line-height: 1.8; color: var(--ink); resize: none; background: var(--bg); }
+.ne-footer { padding: 12px 20px; background: white; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.ai-indicator { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--purple); font-weight: 600; background: var(--purple-light); padding: 5px 10px; border-radius: 20px; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ink4); }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.agent-row, .visit-block, .branch-card, .contact-card, .mail-contact-item { animation: fadeUp 0.2s ease both; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">Agent<em>Orbit</em></div>
+    <div class="logo-tagline">International Office CRM</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group-label">Manage</div>
+    <button class="nav-btn active" onclick="switchView('agents',this)">
+      <span class="n-icon">🏢</span> Agents
+      <span class="n-badge">177</span>
+    </button>
+    <button class="nav-btn" onclick="switchView('itinerary',this)">
+      <span class="n-icon">✈️</span> Itinerary Planner
+    </button>
+    <button class="nav-btn" onclick="switchView('notes',this)">
+      <span class="n-icon">📝</span> Visit Notes
+    </button>
+    <div class="nav-group-label">Comms</div>
+    <button class="nav-btn" onclick="switchView('mail',this)">
+      <span class="n-icon">✉️</span> Mailing
+    </button>
+    <div class="nav-group-label">Reports</div>
+    <button class="nav-btn dim"><span class="n-icon">✨</span> AI Reports</button>
+    <button class="nav-btn dim"><span class="n-icon">📊</span> Performance</button>
+    <button class="nav-btn dim"><span class="n-icon">🎓</span> Student Intake</button>
+    <div class="nav-group-label">Admin</div>
+    <button class="nav-btn dim"><span class="n-icon">⚙️</span> Settings</button>
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-av">RH</div>
+    <div>
+      <div class="user-av-name">Ramy Hegab</div>
+      <div class="user-av-role">Account Manager</div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar" id="topbar">
+    <div class="topbar-breadcrumb" id="breadcrumb">
+      <span class="breadcrumb-current">Agents</span>
+    </div>
+    <div class="topbar-right" id="topbar-right">
+      <button class="btn btn-outline btn-sm">⬆ Import CSV</button>
+      <button class="btn btn-primary btn-sm">+ Add Agent</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ═══ AGENTS VIEW ═══ -->
+    <div class="view active" id="view-agents">
+      <div class="agents-view">
+
+        <!-- Left: list -->
+        <div class="agent-list-panel">
+          <div class="alp-toolbar">
+            <div class="search-wrap">
+              <span class="search-icon">⌕</span>
+              <input type="text" id="agent-search" placeholder="Search agents, codes, contacts…" oninput="filterAgents()">
+            </div>
+            <div class="filter-row">
+              <button class="chip-filter active" onclick="setCountryFilter('',this)">All</button>
+              <button class="chip-filter" onclick="setCountryFilter('Pakistan',this)">Pakistan</button>
+              <button class="chip-filter" onclick="setCountryFilter('India',this)">India</button>
+              <button class="chip-filter" onclick="setCountryFilter('China',this)">China</button>
+            </div>
+          </div>
+          <div class="alp-count" id="alp-count">177 agents</div>
+          <div class="agent-list" id="agent-list"></div>
+        </div>
+
+        <!-- Right: detail -->
+        <div class="agent-detail-panel" id="adp">
+          <div class="adp-empty" id="adp-empty">
+            <div class="adp-empty-icon">🏢</div>
+            <div class="adp-empty-text">Select an agent to view details</div>
+          </div>
+          <div id="adp-content" style="display:none;flex:1;overflow:hidden;flex-direction:column;display:none;">
+            <div class="adp-header" id="adp-header"></div>
+            <div class="adp-tabs">
+              <div class="adp-tab active" onclick="setTab('overview',this)">Overview</div>
+              <div class="adp-tab" onclick="setTab('branches',this)">Branches</div>
+              <div class="adp-tab" onclick="setTab('contacts',this)">Contacts</div>
+            </div>
+            <div class="adp-body" id="adp-body"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══ ITINERARY VIEW ═══ -->
+    <div class="view" id="view-itinerary">
+      <div class="itinerary-view">
+        <div class="itin-toolbar">
+          <input class="trip-name-input" value="Pakistan — Lahore · Oct 2025" id="trip-name">
+          <button class="btn btn-outline btn-sm">📋 Export PDF</button>
+          <button class="btn btn-green btn-sm">✨ Generate AI Report</button>
+        </div>
+        <div class="itin-body">
+          <div class="itin-left">
+            <div class="trip-stats">
+              <div class="trip-stat"><div class="ts-val">3</div><div class="ts-label">Visits</div></div>
+              <div class="trip-stat"><div class="ts-val">2</div><div class="ts-label">Days</div></div>
+              <div class="trip-stat"><div class="ts-val" style="color:var(--blue)">Lahore</div><div class="ts-label">City</div></div>
+              <div class="trip-stat"><div class="ts-val" style="color:var(--green)">PK</div><div class="ts-label">Country</div></div>
+            </div>
+            <div id="timeline"></div>
+          </div>
+          <div class="itin-right">
+            <div class="form-title">➕ Add Visit</div>
+            <div class="form-field">
+              <label class="form-label">Day</label>
+              <select class="form-select"><option>Day 1 — Thu 2 Oct</option><option>Day 2 — Fri 3 Oct</option></select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Time</label>
+              <input class="form-input" type="time" value="10:00">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Activity</label>
+              <select class="form-select">
+                <option>🤝 Agent Visit</option>
+                <option>📢 Education Fair</option>
+                <option>📞 Call / Meeting</option>
+                <option>🍽️ Networking Dinner</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Branch <span style="font-size:10px;color:var(--green);font-weight:400">• Near Lahore</span></label>
+              <div id="branch-picker"></div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Pre-visit Notes</label>
+              <textarea class="form-textarea" placeholder="Objectives, discussion points…"></textarea>
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="alert('Visit added to itinerary!')">Add to Itinerary</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ NOTES VIEW ═══ -->
+    <div class="view" id="view-notes">
+      <div class="notes-view">
+        <div class="notes-sidebar">
+          <div class="ns-header">Visit Notes</div>
+          <div id="notes-list"></div>
+        </div>
+        <div class="notes-editor">
+          <div class="ne-header">
+            <div>
+              <div class="ne-title" id="ne-title">AECC — Gullberg, Lahore</div>
+              <div class="ne-meta" id="ne-meta">🤝 Agent Visit · Thu 2 Oct 2025 · 10:00</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="tag tag-green">✓ Completed</span>
+              <button class="btn btn-outline btn-sm">Share</button>
+            </div>
+          </div>
+          <textarea class="ne-textarea" id="ne-textarea"></textarea>
+          <div class="ne-footer">
+            <div class="ai-indicator">✦ AI Ready</div>
+            <span style="font-size:12px;color:var(--ink3)">Notes auto-feed into your trip report</span>
+            <button class="btn btn-primary btn-sm" style="margin-left:auto" id="note-save-btn" onclick="saveNote()">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ MAIL VIEW ═══ -->
+    <div class="view" id="view-mail">
+      <div class="mail-view">
+        <!-- Contact list -->
+        <div class="mail-list-panel">
+          <div class="mlp-top">
+            <div class="mlp-title">Mailing</div>
+            <div class="segment-tabs">
+              <button class="seg-tab active" onclick="setMailSegment('all',this)">All</button>
+              <button class="seg-tab" onclick="setMailSegment('financial',this)">Financial</button>
+              <button class="seg-tab" onclick="setMailSegment('operational',this)">Operational</button>
+              <button class="seg-tab" onclick="setMailSegment('marketing',this)">Marketing</button>
+            </div>
+          </div>
+          <div class="mail-contact-list" id="mail-contact-list"></div>
+        </div>
+        <!-- Compose -->
+        <div class="mail-compose">
+          <div class="mc-header">
+            <div>
+              <div class="mc-title">New Message</div>
+              <div class="mc-recipients" id="mc-recipients">0 recipients selected</div>
+            </div>
+            <div style="margin-left:auto;display:flex;gap:8px;">
+              <button class="btn btn-outline btn-sm">Save Draft</button>
+              <button class="btn btn-primary btn-sm" onclick="alert('Message sent to selected contacts!')">Send ✉️</button>
+            </div>
+          </div>
+          <div class="mc-body">
+            <div class="lock-notice">
+              🔒 <div><strong>Secure Mailing Active.</strong> Contacts tagged <em>Financial / Contractual</em> are the only recipients permitted for commission statements, agreement renewals, and fee schedule communications. Operational and Marketing contacts cannot receive this category.</div>
+            </div>
+            <div class="compose-card">
+              <div class="compose-field">
+                <label class="compose-label">Category</label>
+                <select class="compose-input" id="mail-category" onchange="updateMailWarning()">
+                  <option value="general">📢 General Communication</option>
+                  <option value="marketing">🎓 Marketing & Recruitment</option>
+                  <option value="financial">💰 Financial / Contractual</option>
+                  <option value="operational">⚙️ Operational Update</option>
+                </select>
+              </div>
+              <div class="compose-field">
+                <label class="compose-label">Subject</label>
+                <input class="compose-input" type="text" placeholder="e.g. January 2026 Intake Update">
+              </div>
+              <div id="mail-warning"></div>
+              <div class="compose-field">
+                <label class="compose-label">Message</label>
+                <textarea class="compose-textarea" placeholder="Type your message here…&#10;&#10;You can use {agent_name}, {contact_name}, {university_name} as personalisation tokens."></textarea>
+              </div>
+              <div class="compose-field">
+                <label class="compose-label">Attachments</label>
+                <button class="btn btn-outline btn-sm">📎 Add file</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+// ══════════ DATA ══════════
+const agents = [
+  {id:1,name:'AECC',legal:'Australia Education Something',code:'AECAU01',status:'Active',hqCountry:'Australia',hqCity:'Melbourne',hqAddr:'Level 5, 350 Collins St, Melbourne',countries:['Egypt','India','Pakistan','Vietnam','UAE'],agreementEnd:'31/3/2027',branches:[{name:'Gullberg, Lahore',city:'Lahore',country:'Pakistan',contact:'Imran',role:'Country Manager Pakistan',email:'imran@aecc.com.au',maps:'https://maps.app.goo.gl/xHua8DJtZUxXRwTu5'},{name:'Bolkky Alexandria',city:'Alexandria',country:'Egypt',contact:'—',role:'Branch Manager',email:'',maps:''}],contacts:[{name:'Mike Tyson',role:'CEO / Owner',email:'miketyson@aecc.com.au',phone:'+44212321234',tags:['financial','contractual']},{name:'Imran Khan',role:'Country Manager PK',email:'imran@aecc.com.au',phone:'+9231200000',tags:['operational']},{name:'Sara Ahmed',role:'Marketing Lead',email:'sara@aecc.com.au',phone:'',tags:['marketing']}]},
+  {id:2,name:'Times Consultant',legal:'Times Consultant',code:'TCPK01',status:'Active',hqCountry:'Pakistan',hqCity:'Karachi',hqAddr:'Karachi PECHS',countries:['Pakistan'],agreementEnd:'31/3/2027',branches:[{name:'Johar Town, Lahore',city:'Lahore',country:'Pakistan',contact:'—',role:'Branch Manager',email:'',maps:''}],contacts:[{name:'Haris Dhnani',role:'Owner / CEO',email:'haris@timesconsultant.com',phone:'',tags:['financial','contractual']},{name:'Ayesha Malik',role:'Operations Manager',email:'ayesha@timesconsultant.com',phone:'',tags:['operational']}]},
+  {id:3,name:'AHZ',legal:'A H & Z Associates Limited',code:'AHZGB01',status:'Active',hqCountry:'UK',hqCity:'London',hqAddr:'2nd Floor, 16 St Clare St, London EC3N 1LQ',countries:['India','Bangladesh','Nepal','Sri Lanka','Pakistan','Nigeria','UK'],agreementEnd:'31/3/2027',branches:[],contacts:[{name:'Golam Mortuza',role:'Director',email:'mortuza@ahzassociates.co.uk',phone:'(207) 377-9630',tags:['financial','contractual']},{name:'Priya Sharma',role:'UK Coordinator',email:'priya@ahzassociates.co.uk',phone:'',tags:['operational','marketing']}]},
+  {id:4,name:'Edify Group',legal:'Edify Group Ltd',code:'EDPK01',status:'Active',hqCountry:'Pakistan',hqCity:'Lahore',hqAddr:'Lahore, Pakistan',countries:['Pakistan'],agreementEnd:'31/3/2027',branches:[{name:'DHA, Lahore',city:'Lahore',country:'Pakistan',contact:'Bilal',role:'Branch Manager',email:'bilal@edify.pk',maps:'https://maps.app.goo.gl/SjL8FBBSwfnrskYN8'}],contacts:[{name:'Bilal Chaudhry',role:'Branch Manager',email:'bilal@edify.pk',phone:'92',tags:['financial','operational']}]},
+  {id:5,name:'Edvoy (IEC Abroad)',legal:'Edvoy Previously IEC Abroad',code:'EDVOY01',status:'Active',hqCountry:'India',hqCity:'Bangalore',hqAddr:'Bangalore, India',countries:['India','Pakistan','UAE'],agreementEnd:'31/12/2026',branches:[{name:'Gullberg, Lahore',city:'Lahore',country:'Pakistan',contact:'—',role:'Country Manager',email:'',maps:''},{name:'I8, Islamabad',city:'Islamabad',country:'Pakistan',contact:'—',role:'Branch Manager',email:'',maps:''}],contacts:[{name:'Rohit Sharma',role:'CEO',email:'rohit@edvoy.com',phone:'',tags:['financial','contractual']},{name:'Zara Ali',role:'Pakistan Country Manager',email:'zara@edvoy.com',phone:'',tags:['operational']}]},
+  {id:6,name:'AAS',legal:'AAS International',code:'AASCH01',status:'Active',hqCountry:'Switzerland',hqCity:'Zurich',hqAddr:'Zurich, Switzerland',countries:['Switzerland','Germany','Austria'],agreementEnd:'30/6/2026',branches:[],contacts:[{name:'Hans Mueller',role:'Director',email:'hans@aas.ch',phone:'',tags:['financial','contractual']}]},
+  {id:7,name:'ABN Education',legal:'ABN Education',code:'ABNPK01',status:'Active',hqCountry:'Pakistan',hqCity:'Lahore',hqAddr:'Lahore, Pakistan',countries:['Pakistan'],agreementEnd:'31/3/2027',branches:[],contacts:[{name:'Ahmad Baig',role:'Owner',email:'ahmad@abn.pk',phone:'',tags:['financial','contractual','operational']}]},
+  {id:8,name:'Azent',legal:'Azent Overseas Education',code:'AEDIN01',status:'Active',hqCountry:'India',hqCity:'Ahmedabad',hqAddr:'Ahmedabad, India',countries:['India'],agreementEnd:'31/3/2026',branches:[],contacts:[{name:'Kiran Patel',role:'CEO',email:'kiran@azent.in',phone:'',tags:['financial','contractual']}]},
+  {id:9,name:'AIMS Education',legal:'AIMS Education Group',code:'AGT-1270',status:'Active',hqCountry:'UAE',hqCity:'Dubai',hqAddr:'Dubai, UAE',countries:['UAE','Egypt','Jordan'],agreementEnd:'31/12/2025',branches:[],contacts:[{name:'Omar Hassan',role:'Director',email:'omar@aims.ae',phone:'',tags:['financial','contractual']},{name:'Layla Karimi',role:'Marketing Manager',email:'layla@aims.ae',phone:'',tags:['marketing']}]},
+  {id:10,name:'Amber Education',legal:'Amber Education Services Ltd',code:'AESCN01',status:'Active',hqCountry:'China',hqCity:'Beijing',hqAddr:'Beijing, China',countries:['China'],agreementEnd:'30/9/2026',branches:[],contacts:[{name:'Wei Zhang',role:'CEO',email:'wei@amber.cn',phone:'',tags:['financial','contractual']},{name:'Li Mei',role:'Operations',email:'li@amber.cn',phone:'',tags:['operational']}]},
+];
+
+const visits=[
+  {id:1,day:1,time:'10:00',agentId:1,branch:'Gullberg, Lahore',contact:'Imran',type:'visit',status:'completed',notes:'Strong pipeline confirmed. 12 applications for Jan 2026. Wants scholarship info for BSc. Exploring Faisalabad expansion.'},
+  {id:2,day:1,time:'14:00',agentId:2,branch:'Johar Town, Lahore',contact:'Haris Dhnani',type:'visit',status:'completed',notes:'Focused on foundation programmes. Counsellor training requested. 7 students pipeline for Sep 2026.'},
+  {id:3,day:2,time:'09:30',agentId:4,branch:'DHA, Lahore',contact:'Bilal',type:'visit',status:'completed',notes:'New branch manager since August. Full institution briefing given. Flag for senior support visit in Q1.'},
+];
+
+const notesList=[
+  {id:1,agentId:1,agent:'AECC — Gullberg, Lahore',date:'Thu 2 Oct 2025 · 10:00',preview:'Strong pipeline confirmed. 12 applications…',text:'Strong pipeline confirmed. 12 applications for Jan 2026. Wants scholarship info for BSc. Exploring Faisalabad expansion.\n\nKey points:\n• January 2026 intake: 12 confirmed applications\n• Scholarship brochures needed for BSc programmes\n• Faisalabad expansion — feasibility to explore\n\nFollow-up actions:\n→ Send updated scholarship brochures by 10 Oct\n→ Call re Faisalabad feasibility by end of October'},
+  {id:2,agentId:2,agent:'Times Consultant — Johar Town',date:'Thu 2 Oct 2025 · 14:00',preview:'Foundation programme focus. Training requested…',text:'Good engagement. Agent focusing heavily on foundation programmes.\nRequested training session for new counsellors.\n\n• Foundation programme interest very high\n• New counsellors need training — November webinar\n• 7 confirmed students for Sep 2026'},
+  {id:3,agentId:4,agent:'Edify Group — DHA, Lahore',date:'Fri 3 Oct 2025 · 09:30',preview:'New branch manager since August. Relationship reset…',text:'New branch manager in post since August. Relationship reset required. Provided full institution briefing.\n\nLower expected output this cycle but long-term potential strong.\nFlag for HoD review — Q1 2026 senior support visit.'},
+];
+
+// ══════════ STATE ══════════
+let activeAgent=null, activeTab='overview', countryFilter='', searchQ='', mailSegment='all';
+const selectedMail=new Set();
+
+// ══════════ AGENTS ══════════
+function initAgents(){
+  renderAgentList();
+}
+
+function filterAgents(){
+  searchQ=document.getElementById('agent-search').value.toLowerCase();
+  renderAgentList();
+}
+
+function setCountryFilter(c,el){
+  countryFilter=c;
+  document.querySelectorAll('.chip-filter').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  renderAgentList();
+}
+
+function getFilteredAgents(){
+  return agents.filter(a=>{
+    const mq=!searchQ||a.name.toLowerCase().includes(searchQ)||a.code.toLowerCase().includes(searchQ)||(a.contacts[0]&&a.contacts[0].name.toLowerCase().includes(searchQ));
+    const mc=!countryFilter||a.countries.includes(countryFilter)||a.hqCountry===countryFilter;
+    return mq&&mc;
+  });
+}
+
+function renderAgentList(){
+  const list=getFilteredAgents();
+  document.getElementById('alp-count').textContent=`${list.length} agent${list.length!==1?'s':''}`;
+  document.getElementById('agent-list').innerHTML=list.map(a=>`
+    <div class="agent-row${activeAgent&&activeAgent.id===a.id?' active':''}" onclick="selectAgent(${a.id})">
+      <div class="agent-row-avatar">${a.name.substring(0,2).toUpperCase()}</div>
+      <div class="agent-row-info">
+        <div class="agent-row-name">${a.name}</div>
+        <div class="agent-row-sub">${a.code} · ${a.hqCity||a.hqCountry}</div>
+      </div>
+      <div class="agent-row-right">
+        <div class="agent-row-country">${a.hqCountry}</div>
+        ${a.branches.length?`<div class="branch-pill">${a.branches.length} branch${a.branches.length>1?'es':''}</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function selectAgent(id){
+  activeAgent=agents.find(a=>a.id===id);
+  activeTab='overview';
+  renderAgentList();
+  document.getElementById('adp-empty').style.display='none';
+  const cont=document.getElementById('adp-content');
+  cont.style.display='flex';cont.style.flexDirection='column';cont.style.flex='1';cont.style.overflow='hidden';
+  renderAgentDetail();
+  // breadcrumb
+  document.getElementById('breadcrumb').innerHTML=`<span style="cursor:pointer;color:var(--ink3)" onclick="clearAgent()">Agents</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">${activeAgent.name}</span>`;
+}
+
+function clearAgent(){
+  activeAgent=null;
+  document.getElementById('adp-empty').style.display='flex';
+  document.getElementById('adp-content').style.display='none';
+  document.getElementById('breadcrumb').innerHTML='<span class="breadcrumb-current">Agents</span>';
+  renderAgentList();
+}
+
+function setTab(tab,el){
+  activeTab=tab;
+  document.querySelectorAll('.adp-tab').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  renderAgentBody();
+}
+
+function renderAgentDetail(){
+  const a=activeAgent;
+  document.getElementById('adp-header').innerHTML=`
+    <div style="flex:1">
+      <div class="adp-name">${a.name}</div>
+      <div class="adp-legal">${a.legal}</div>
+      <div class="adp-meta">
+        <span class="tag tag-green">✓ Active</span>
+        <span class="tag tag-blue">📍 ${a.hqCountry}</span>
+        <span class="tag tag-gray">${a.code}</span>
+        <span class="tag tag-gray">Until ${a.agreementEnd}</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:flex-start;">
+      <button class="btn btn-outline btn-sm" onclick="switchView('mail',document.querySelectorAll('.nav-btn')[3])">✉️ Mail</button>
+      <button class="btn btn-primary btn-sm" onclick="switchView('itinerary',document.querySelectorAll('.nav-btn')[1])">✈️ Plan Visit</button>
+    </div>`;
+  renderAgentBody();
+}
+
+function renderAgentBody(){
+  const a=activeAgent;
+  const body=document.getElementById('adp-body');
+  if(activeTab==='overview'){
+    body.innerHTML=`
+      <div class="info-grid">
+        <div class="info-card"><div class="info-card-label">HQ Country</div><div class="info-card-value">${a.hqCountry}</div></div>
+        <div class="info-card"><div class="info-card-label">HQ City</div><div class="info-card-value">${a.hqCity||'—'}</div></div>
+        <div class="info-card full"><div class="info-card-label">Address</div><div class="info-card-value" style="font-size:13px">${a.hqAddr}</div></div>
+        <div class="info-card"><div class="info-card-label">Agreement Ends</div><div class="info-card-value">${a.agreementEnd}</div></div>
+        <div class="info-card"><div class="info-card-label">Branches</div><div class="info-card-value" style="color:var(--blue)">${a.branches.length||'—'}</div></div>
+      </div>
+      <div class="sec-title">Countries of Operation <span>${a.countries.length} countries</span></div>
+      <div class="countries-strip">${a.countries.map(c=>`<span class="ctag">🌐 ${c}</span>`).join('')}</div>`;
+  } else if(activeTab==='branches'){
+    body.innerHTML=`<div class="sec-title">Branches <span>${a.branches.length} office${a.branches.length!==1?'s':''}</span></div>`+
+      (a.branches.length?a.branches.map(b=>`
+        <div class="branch-card">
+          <div class="bc-header">
+            <div>
+              <div class="bc-name">${b.name}</div>
+              <div class="bc-loc">📍 ${b.city}, ${b.country}</div>
+            </div>
+            <div style="display:flex;gap:6px;">
+              ${b.maps?`<a href="${b.maps}" target="_blank" class="map-link btn btn-outline btn-xs">🗺 Map</a>`:''}
+              <button class="btn btn-outline btn-xs" onclick="switchView('itinerary',document.querySelectorAll('.nav-btn')[1])">✈️ Visit</button>
+            </div>
+          </div>
+          <div class="bc-contact">
+            <div class="bc-av">${b.contact.substring(0,1)}</div>
+            <div><div class="bc-cname">${b.contact}</div><div class="bc-crole">${b.role}${b.email?` · <a href="mailto:${b.email}" style="color:var(--blue)">${b.email}</a>`:''}</div></div>
+          </div>
+        </div>`).join(''):
+      `<div style="text-align:center;padding:40px;color:var(--ink4)">No branches on record. <button class="btn btn-outline btn-sm" style="margin-top:10px">+ Add Branch</button></div>`);
+  } else {
+    const tagLabel={'financial':'💰 Financial','contractual':'📄 Contractual','operational':'⚙️ Operational','marketing':'📢 Marketing'};
+    const tagClass={'financial':'tag-amber','contractual':'tag-purple','operational':'tag-blue','marketing':'tag-green'};
+    body.innerHTML=`<div class="sec-title">Contacts <span>${a.contacts.length} people</span></div>`+
+      a.contacts.map(c=>`
+        <div class="contact-card">
+          <div class="contact-av">${c.name.split(' ').map(w=>w[0]).join('').substring(0,2)}</div>
+          <div class="contact-info">
+            <div class="contact-name">${c.name}</div>
+            <div class="contact-role">${c.role}</div>
+            ${c.email?`<div class="contact-detail" style="color:var(--blue)">${c.email}</div>`:''}
+            <div class="contact-tags">${c.tags.map(t=>`<span class="tag ${tagClass[t]||'tag-gray'}">${tagLabel[t]||t}</span>`).join('')}</div>
+          </div>
+          <div class="contact-actions">
+            ${c.email?`<button class="btn btn-outline btn-xs" onclick="switchView('mail',document.querySelectorAll('.nav-btn')[3])">✉️</button>`:''}
+          </div>
+        </div>`).join('');
+  }
+}
+
+// ══════════ ITINERARY ══════════
+function renderTimeline(){
+  const byDay={};
+  visits.forEach(v=>{if(!byDay[v.day])byDay[v.day]=[];byDay[v.day].push(v);});
+  const dayNames={1:'Thursday, 2 Oct',2:'Friday, 3 Oct'};
+  const typeClass={visit:'vb-visit',fair:'vb-fair',dinner:'vb-dinner'};
+  const typeLabel={visit:'Agent Visit',fair:'Education Fair',dinner:'Dinner'};
+  document.getElementById('timeline').innerHTML=Object.keys(byDay).map(d=>`
+    <div class="day-block">
+      <div class="day-header">
+        <div class="day-num">D${d}</div>
+        <div><span class="day-label-text">Day ${d}</span><span class="day-date-text">— ${dayNames[d]}</span></div>
+      </div>
+      ${byDay[d].map(v=>{
+        const a=agents.find(x=>x.id===v.agentId)||{name:'Unknown'};
+        return `<div class="visit-block">
+          <div class="vb-top">
+            <span class="vb-time">${v.time}</span>
+            <span class="vb-type ${typeClass[v.type]||'vb-visit'}">${typeLabel[v.type]||v.type}</span>
+            <span class="tag tag-green vb-status">✓ ${v.status}</span>
+          </div>
+          <div class="vb-agent">${a.name}</div>
+          <div class="vb-branch">📍 ${v.branch} · ${v.contact}</div>
+          <div class="vb-notes">${v.notes}</div>
+          <div class="vb-actions">
+            <button class="btn btn-outline btn-xs" onclick="switchView('notes',document.querySelectorAll('.nav-btn')[2])">📝 Notes</button>
+            <button class="btn btn-outline btn-xs">🗺 Map</button>
+            <button class="btn btn-outline btn-xs">✏️ Edit</button>
+          </div>
+        </div>`;}).join('')}
+      <div class="add-stop">+ Add stop to Day ${d}</div>
+    </div>`).join('');
+}
+
+function renderBranchPicker(){
+  const branches=[
+    {name:'AECC',branch:'Gullberg, Lahore',dist:'0.8km'},
+    {name:'Edvoy',branch:'Gullberg, Lahore',dist:'0.8km'},
+    {name:'Times Consultant',branch:'Johar Town',dist:'3.2km'},
+    {name:'Edify Group',branch:'DHA, Lahore',dist:'4.1km'},
+    {name:'Edvoy',branch:'I8, Islamabad',dist:'280km'},
+  ];
+  document.getElementById('branch-picker').innerHTML=branches.map(b=>`
+    <div class="branch-pick-item" onclick="this.classList.toggle('sel');this.querySelector('.bpi-check').textContent=this.classList.contains('sel')?'✓':''">
+      <div class="bpi-check"></div>
+      <div class="bpi-info">
+        <div class="bpi-name">${b.name}</div>
+        <div class="bpi-loc">📍 ${b.branch}</div>
+      </div>
+      <span class="distance-badge">${b.dist}</span>
+    </div>`).join('');
+}
+
+// ══════════ NOTES ══════════
+function renderNotes(){
+  document.getElementById('notes-list').innerHTML=notesList.map((n,i)=>`
+    <div class="note-item${i===0?' active':''}" onclick="selectNote(${n.id},this)">
+      <div class="ni-agent">${n.agent}</div>
+      <div class="ni-date">${n.date}</div>
+      <div class="ni-preview">${n.preview}</div>
+    </div>`).join('');
+  loadNote(notesList[0]);
+}
+function selectNote(id,el){
+  document.querySelectorAll('.note-item').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  loadNote(notesList.find(n=>n.id===id));
+}
+function loadNote(n){
+  document.getElementById('ne-title').textContent=n.agent;
+  document.getElementById('ne-meta').textContent=`🤝 Agent Visit · ${n.date}`;
+  document.getElementById('ne-textarea').value=n.text;
+}
+function saveNote(){
+  const btn=document.getElementById('note-save-btn');
+  btn.textContent='✓ Saved'; btn.style.background='var(--green)';
+  setTimeout(()=>{btn.textContent='Save';btn.style.background='';},1600);
+}
+
+// ══════════ MAIL ══════════
+const tagLabel2={'financial':'💰 Financial','contractual':'📄 Contractual','operational':'⚙️ Operational','marketing':'📢 Marketing'};
+const tagClass2={'financial':'tag-amber','contractual':'tag-purple','operational':'tag-blue','marketing':'tag-green'};
+
+function getAllContacts(){
+  const all=[];
+  agents.forEach(a=>{
+    a.contacts.forEach(c=>{
+      all.push({...c,agentId:a.id,agentName:a.name});
+    });
+  });
+  return all;
+}
+
+function setMailSegment(seg,el){
+  mailSegment=seg;
+  document.querySelectorAll('.seg-tab').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  renderMailContacts();
+}
+
+function renderMailContacts(){
+  let contacts=getAllContacts();
+  if(mailSegment!=='all') contacts=contacts.filter(c=>c.tags.includes(mailSegment));
+  document.getElementById('mail-contact-list').innerHTML=contacts.map((c,i)=>`
+    <div class="mail-contact-item" id="mc-${i}">
+      <div class="mci-sel${selectedMail.has(i)?' checked':''}" onclick="toggleMailSel(${i},this)">${selectedMail.has(i)?'✓':''}</div>
+      <div class="mci-av">${c.name.split(' ').map(w=>w[0]).join('').substring(0,2)}</div>
+      <div class="mci-info">
+        <div class="mci-name">${c.name}</div>
+        <div class="mci-agent">${c.agentName} · ${c.role}</div>
+        <div class="mci-tags">${c.tags.map(t=>`<span class="tag ${tagClass2[t]||'tag-gray'}" style="font-size:10px;padding:2px 7px">${tagLabel2[t]||t}</span>`).join('')}</div>
+      </div>
+    </div>`).join('');
+  updateRecipientCount();
+}
+
+function toggleMailSel(i,el){
+  if(selectedMail.has(i)){selectedMail.delete(i);el.classList.remove('checked');el.textContent='';}
+  else{selectedMail.add(i);el.classList.add('checked');el.textContent='✓';}
+  updateRecipientCount();
+}
+
+function updateRecipientCount(){
+  document.getElementById('mc-recipients').textContent=`${selectedMail.size} recipient${selectedMail.size!==1?'s':''} selected`;
+}
+
+function updateMailWarning(){
+  const cat=document.getElementById('mail-category').value;
+  const w=document.getElementById('mail-warning');
+  if(cat==='financial'){
+    w.innerHTML=`<div class="restriction-notice">⚠️ <div><strong>Restricted Category.</strong> This message will only be deliverable to contacts tagged <em>Financial / Contractual</em>. Operational and Marketing contacts will be automatically excluded from this send.</div></div>`;
+  } else {
+    w.innerHTML='';
+  }
+}
+
+// ══════════ NAV ══════════
+function switchView(name,el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const titles={agents:'Agents',itinerary:'Itinerary Planner',notes:'Visit Notes',mail:'Mailing',reports:'AI Reports'};
+  const rights={
+    agents:'<button class="btn btn-outline btn-sm">⬆ Import CSV</button><button class="btn btn-primary btn-sm">+ Add Agent</button>',
+    itinerary:'<button class="btn btn-outline btn-sm">📋 Export PDF</button><button class="btn btn-green btn-sm">✨ Generate AI Report</button>',
+    notes:'<button class="btn btn-primary btn-sm">+ New Note</button>',
+    mail:'<button class="btn btn-purple btn-sm">📋 View Sent Log</button>',
+  };
+  document.getElementById('breadcrumb').innerHTML=`<span class="breadcrumb-current">${titles[name]||''}</span>`;
+  document.getElementById('topbar-right').innerHTML=rights[name]||'';
+}
+
+// ══════════ INIT ══════════
+initAgents();
+renderTimeline();
+renderBranchPicker();
+renderNotes();
+renderMailContacts();
+</script>
+</body>
+</html>

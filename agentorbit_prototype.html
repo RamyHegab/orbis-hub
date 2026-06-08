@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentOrbit — International Office CRM</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+  :root {
+    --bg:#0d0f14;--surface:#13161e;--surface2:#1a1e2a;--surface3:#222638;
+    --border:#2a2f42;--accent:#4f6ef7;--accent2:#7c3aed;--accent3:#06d6a0;
+    --warn:#f59e0b;--danger:#ef4444;--text:#e8eaf2;--text2:#8b90a8;--text3:#555a72;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;}
+  .sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+  .logo{padding:20px 18px 16px;border-bottom:1px solid var(--border);}
+  .logo-mark{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;letter-spacing:-0.5px;}
+  .logo-mark span{color:var(--accent);}
+  .logo-sub{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-top:2px;}
+  .nav{padding:12px 10px;flex:1;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s;margin-bottom:2px;border:1px solid transparent;}
+  .nav-item:hover{background:var(--surface2);color:var(--text);}
+  .nav-item.active{background:var(--surface3);color:var(--text);border-color:var(--border);}
+  .nav-item .icon{width:16px;text-align:center;font-size:14px;}
+  .nav-badge{margin-left:auto;background:var(--accent);color:white;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;}
+  .nav-section{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);padding:14px 10px 6px;font-weight:600;}
+  .nav-dim{opacity:.4;cursor:default!important;}
+  .user-pill{margin:10px;padding:10px 12px;background:var(--surface2);border-radius:10px;border:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+  .avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;}
+  .user-name{font-size:12px;font-weight:600;}
+  .user-role{font-size:10px;color:var(--text3);}
+  .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+  .topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;}
+  .page-title{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;}
+  .topbar-actions{margin-left:auto;display:flex;gap:8px;}
+  .btn{padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+  .btn-primary{background:var(--accent);color:white;}
+  .btn-primary:hover{background:#6278f8;}
+  .btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border);}
+  .btn-ghost:hover{background:var(--surface2);color:var(--text);}
+  .btn-sm{padding:5px 10px;font-size:11px;}
+  .btn-success{background:var(--accent3);color:#0d0f14;}
+  .content{flex:1;overflow:hidden;display:flex;}
+  .view{display:none;flex:1;overflow:hidden;}
+  .view.active{display:flex;flex-direction:column;}
+
+  /* AGENTS */
+  .agents-toolbar{padding:14px 20px;display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;}
+  .search-box{flex:1;max-width:340px;position:relative;}
+  .search-box input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px 8px 34px;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;}
+  .search-box input::placeholder{color:var(--text3);}
+  .search-box input:focus{border-color:var(--accent);}
+  .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:13px;}
+  .filter-select{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--text2);outline:none;cursor:pointer;font-family:'DM Sans',sans-serif;}
+  .count-chip{margin-left:auto;font-size:12px;color:var(--text3);}
+  .agents-wrap{display:flex;flex:1;overflow:hidden;}
+  .agents-table-wrap{flex:1;overflow-y:auto;padding:16px 20px;}
+  .agents-table{width:100%;border-collapse:collapse;}
+  .agents-table th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);font-weight:600;padding:0 12px 10px;border-bottom:1px solid var(--border);}
+  .agents-table td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+  .agents-table tr:hover td{background:var(--surface2);cursor:pointer;}
+  .agent-name{font-weight:600;color:var(--text);}
+  .agent-code{font-family:monospace;font-size:11px;color:var(--text3);margin-top:2px;}
+  .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;}
+  .badge-active{background:rgba(6,214,160,.12);color:var(--accent3);}
+  .badge-inactive{background:rgba(239,68,68,.12);color:var(--danger);}
+  .countries-wrap{display:flex;flex-wrap:wrap;gap:4px;}
+  .country-tag{background:var(--surface3);color:var(--text2);font-size:10px;padding:2px 7px;border-radius:4px;border:1px solid var(--border);}
+  .branch-count{color:var(--accent);font-weight:600;}
+
+  /* PANEL */
+  .detail-panel{width:360px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;transform:translateX(360px);transition:transform .25s ease;}
+  .detail-panel.open{transform:translateX(0);}
+  .panel-header{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;}
+  .panel-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;}
+  .panel-code{font-size:11px;color:var(--text3);font-family:monospace;margin-top:2px;}
+  .panel-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:0;line-height:1;}
+  .panel-close:hover{color:var(--text);}
+  .panel-body{flex:1;overflow-y:auto;padding:16px 18px;}
+  .panel-section{margin-bottom:18px;}
+  .panel-section-title{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);font-weight:600;margin-bottom:10px;}
+  .info-row{display:flex;gap:8px;margin-bottom:8px;align-items:flex-start;}
+  .info-label{font-size:11px;color:var(--text3);width:90px;flex-shrink:0;margin-top:1px;}
+  .info-value{font-size:13px;color:var(--text);}
+  .branch-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;}
+  .branch-card-name{font-size:12px;font-weight:600;}
+  .branch-card-loc{font-size:11px;color:var(--text3);margin-top:2px;}
+  .branch-card-contact{font-size:11px;color:var(--text2);margin-top:6px;padding-top:6px;border-top:1px solid var(--border);}
+  .map-link{color:var(--accent);text-decoration:none;font-size:11px;}
+  .map-link:hover{text-decoration:underline;}
+
+  /* ITINERARY */
+  .stats-row{display:flex;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;}
+  .stat-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;flex:1;}
+  .stat-value{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;}
+  .stat-label{font-size:11px;color:var(--text3);margin-top:2px;}
+  .stat-card.ac{border-color:rgba(79,110,247,.3);background:rgba(79,110,247,.05);}
+  .stat-card.ac .stat-value{color:var(--accent);}
+  .itinerary-layout{display:flex;flex:1;overflow:hidden;}
+  .itinerary-left{flex:1;overflow-y:auto;padding:20px;}
+  .itinerary-right{width:320px;background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;padding:16px;flex-shrink:0;}
+  .trip-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+  .trip-title-input{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;background:transparent;border:none;border-bottom:2px solid var(--border);color:var(--text);outline:none;padding-bottom:4px;flex:1;}
+  .trip-title-input:focus{border-color:var(--accent);}
+  .timeline{position:relative;}
+  .timeline::before{content:'';position:absolute;left:18px;top:0;bottom:0;width:2px;background:var(--border);}
+  .timeline-day{margin-bottom:24px;}
+  .day-label{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .day-dot{width:36px;height:36px;border-radius:50%;background:var(--surface3);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:11px;color:var(--accent);flex-shrink:0;z-index:1;position:relative;}
+  .day-text{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;}
+  .day-date{font-size:12px;color:var(--text3);margin-left:4px;}
+  .visit-card{margin-left:56px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;transition:border-color .15s;}
+  .visit-card:hover{border-color:var(--accent);}
+  .visit-card-top{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .visit-time{font-size:11px;color:var(--accent);font-weight:600;font-family:monospace;}
+  .act-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;}
+  .act-visit{background:rgba(79,110,247,.15);color:var(--accent);}
+  .act-fair{background:rgba(245,158,11,.15);color:var(--warn);}
+  .visit-agent{font-weight:600;font-size:13px;}
+  .visit-branch{font-size:12px;color:var(--text3);margin-top:2px;}
+  .notes-preview{background:var(--surface3);border-radius:6px;padding:8px 10px;font-size:12px;color:var(--text2);margin-top:8px;line-height:1.5;border-left:3px solid var(--accent2);}
+  .visit-card-actions{display:flex;gap:6px;margin-top:8px;}
+  .add-visit-btn{margin-left:56px;border:1.5px dashed var(--border);border-radius:10px;padding:10px;text-align:center;color:var(--text3);font-size:12px;cursor:pointer;transition:all .15s;margin-bottom:8px;}
+  .add-visit-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(79,110,247,.05);}
+  .itinerary-right-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;}
+  .form-group{margin-bottom:12px;}
+  .form-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-weight:600;margin-bottom:6px;display:block;}
+  .form-input,.form-select,.form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:8px 10px;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;}
+  .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);}
+  .form-textarea{resize:vertical;min-height:70px;}
+  .agent-select-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;margin-bottom:6px;cursor:pointer;transition:all .15s;}
+  .agent-select-item:hover,.agent-select-item.sel{border-color:var(--accent);background:rgba(79,110,247,.08);}
+  .check{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;}
+  .agent-select-item.sel .check{background:var(--accent);border-color:var(--accent);color:white;}
+  .agent-select-name{font-size:12px;font-weight:600;}
+  .agent-select-loc{font-size:11px;color:var(--text3);}
+
+  /* NOTES */
+  .notes-layout{display:flex;flex:1;overflow:hidden;}
+  .notes-list{width:280px;background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;}
+  .notes-list-header{padding:14px 16px;border-bottom:1px solid var(--border);font-family:'Syne',sans-serif;font-weight:700;font-size:13px;}
+  .note-item{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;}
+  .note-item:hover{background:var(--surface2);}
+  .note-item.active{background:var(--surface3);border-left:3px solid var(--accent);}
+  .note-item-agent{font-weight:600;font-size:13px;}
+  .note-item-date{font-size:11px;color:var(--text3);margin-top:2px;}
+  .note-item-preview{font-size:11px;color:var(--text2);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .notes-editor{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+  .notes-editor-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  .notes-editor-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;}
+  .notes-editor-meta{font-size:12px;color:var(--text3);margin-top:2px;}
+  .notes-textarea{flex:1;background:transparent;border:none;padding:20px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.7;resize:none;outline:none;}
+  .notes-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+  .ai-badge{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--accent2);background:rgba(124,58,237,.1);padding:5px 10px;border-radius:6px;border:1px solid rgba(124,58,237,.2);}
+
+  /* REPORTS */
+  .report-wrap{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:0;}
+  .report-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:24px;max-width:700px;}
+  .report-section-title{font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;}
+  .report-p{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px;}
+  .report-visit-block{background:var(--surface3);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .rvb-name{font-weight:600;font-size:13px;}
+  .rvb-meta{font-size:11px;color:var(--text3);margin-bottom:6px;}
+  .rvb-body{font-size:12px;color:var(--text2);line-height:1.6;}
+  .action-row{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--text2);margin-bottom:6px;}
+
+  ::-webkit-scrollbar{width:4px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">Agent<span>Orbit</span></div>
+    <div class="logo-sub">International Office CRM</div>
+  </div>
+  <div class="nav">
+    <div class="nav-section">Manage</div>
+    <div class="nav-item active" onclick="switchView('agents',this)"><span class="icon">🏢</span>Agents<span class="nav-badge">177</span></div>
+    <div class="nav-item" onclick="switchView('itinerary',this)"><span class="icon">✈️</span>Itinerary Planner</div>
+    <div class="nav-item" onclick="switchView('notes',this)"><span class="icon">📝</span>Visit Notes</div>
+    <div class="nav-section">Reports</div>
+    <div class="nav-item" onclick="switchView('reports',this)"><span class="icon">✨</span>AI Trip Reports</div>
+    <div class="nav-item nav-dim"><span class="icon">📊</span>Agent Performance</div>
+    <div class="nav-item nav-dim"><span class="icon">🎓</span>Student Intake</div>
+    <div class="nav-section">Admin</div>
+    <div class="nav-item nav-dim"><span class="icon">⚙️</span>Settings</div>
+  </div>
+  <div class="user-pill">
+    <div class="avatar">RH</div>
+    <div>
+      <div class="user-name">Ramy Hegab</div>
+      <div class="user-role">Account Manager</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="page-title" id="page-title">Agent Directory</div>
+    <div class="topbar-actions" id="topbar-actions">
+      <button class="btn btn-ghost btn-sm">⬆ Import CSV</button>
+      <button class="btn btn-primary btn-sm">+ Add Agent</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- AGENTS -->
+    <div class="view active" id="view-agents">
+      <div class="agents-toolbar">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="agent-search" placeholder="Search agents, contacts, codes..." oninput="filterAgents()">
+        </div>
+        <select class="filter-select" id="country-filter" onchange="filterAgents()">
+          <option value="">All Countries</option>
+          <option>Pakistan</option><option>India</option><option>Egypt</option>
+          <option>China</option><option>Nigeria</option><option>UAE</option>
+          <option>UK</option><option>Bangladesh</option>
+        </select>
+        <select class="filter-select" id="status-filter" onchange="filterAgents()">
+          <option value="">All Statuses</option><option>Active</option><option>Inactive</option>
+        </select>
+        <div class="count-chip" id="agent-count">Showing 10 agents</div>
+      </div>
+      <div class="agents-wrap">
+        <div class="agents-table-wrap">
+          <table class="agents-table">
+            <thead><tr>
+              <th>Agent</th><th>HQ Location</th><th>Countries of Operation</th>
+              <th>Agreement</th><th>Status</th><th>Branches</th>
+            </tr></thead>
+            <tbody id="agents-tbody"></tbody>
+          </table>
+        </div>
+        <div class="detail-panel" id="detail-panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title" id="panel-name">—</div>
+              <div class="panel-code" id="panel-code">—</div>
+            </div>
+            <button class="panel-close" onclick="closePanel()">✕</button>
+          </div>
+          <div class="panel-body" id="panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ITINERARY -->
+    <div class="view" id="view-itinerary">
+      <div class="stats-row">
+        <div class="stat-card ac"><div class="stat-value">3</div><div class="stat-label">Visits Planned</div></div>
+        <div class="stat-card"><div class="stat-value">2</div><div class="stat-label">Days</div></div>
+        <div class="stat-card"><div class="stat-value">Lahore</div><div class="stat-label">Destination</div></div>
+        <div class="stat-card"><div class="stat-value" style="color:var(--accent3)">Oct 2025</div><div class="stat-label">Travel Month</div></div>
+      </div>
+      <div class="itinerary-layout">
+        <div class="itinerary-left">
+          <div class="trip-header">
+            <input class="trip-title-input" value="Pakistan — Lahore Oct 2025">
+            <button class="btn btn-ghost btn-sm">📋 Export</button>
+            <button class="btn btn-success btn-sm" onclick="switchView('reports',document.querySelectorAll('.nav-item')[3])">✨ Generate Report</button>
+          </div>
+          <div class="timeline" id="timeline"></div>
+        </div>
+        <div class="itinerary-right">
+          <div class="itinerary-right-title">➕ Add Visit</div>
+          <div class="form-group">
+            <label class="form-label">Day</label>
+            <select class="form-select"><option>Day 1 — Thu 2 Oct</option><option>Day 2 — Fri 3 Oct</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Time</label>
+            <input class="form-input" type="time" value="10:00">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Activity Type</label>
+            <select class="form-select">
+              <option>🤝 Agent Visit</option><option>📢 Education Fair</option>
+              <option>📞 Call / Meeting</option><option>🍽️ Networking Dinner</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Select Branch</label>
+            <div id="branch-picker"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pre-visit Notes</label>
+            <textarea class="form-textarea" placeholder="Objectives, things to discuss…"></textarea>
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="alert('Visit added to itinerary!')">Add to Itinerary</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTES -->
+    <div class="view" id="view-notes">
+      <div class="notes-layout">
+        <div class="notes-list">
+          <div class="notes-list-header">Visit Notes</div>
+          <div id="notes-list-items"></div>
+        </div>
+        <div class="notes-editor">
+          <div class="notes-editor-header">
+            <div>
+              <div class="notes-editor-title" id="note-title">AECC — Gullberg, Lahore</div>
+              <div class="notes-editor-meta" id="note-meta">🤝 Agent Visit · Thu 2 Oct 2025 · 10:00</div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <span class="badge badge-active">Completed</span>
+              <button class="btn btn-ghost btn-sm">Share</button>
+            </div>
+          </div>
+          <textarea class="notes-textarea" id="main-notes" placeholder="Start typing your visit notes here…&#10;&#10;Use this space for:&#10;• Key discussion points&#10;• Follow-up actions&#10;• Agent feedback&#10;• Recruitment potential&#10;• Issues or concerns"></textarea>
+          <div class="notes-footer">
+            <div class="ai-badge">✨ AI Ready</div>
+            <span style="font-size:12px;color:var(--text3)">Notes used to auto-generate trip report</span>
+            <button class="btn btn-primary btn-sm" style="margin-left:auto" id="save-btn" onclick="saveNote()">Save Notes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="view" id="view-reports">
+      <div style="padding:16px 20px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;gap:12px;flex-shrink:0;">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;">Pakistan — Lahore Oct 2025</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px;">3 visits · 2 days · AI-generated report</div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:8px;">
+          <button class="btn btn-ghost btn-sm">📄 Export PDF</button>
+          <button class="btn btn-ghost btn-sm">📧 Email Report</button>
+        </div>
+      </div>
+      <div class="report-wrap">
+        <div class="report-card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+            <div style="background:var(--accent2);color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:1px;">AI GENERATED</div>
+            <span style="font-size:12px;color:var(--text3)">Based on 3 visit notes · Sun 6 Oct 2025</span>
+          </div>
+          <h2 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:4px;">Trip Report: Pakistan (Lahore)</h2>
+          <p style="font-size:12px;color:var(--text3);margin-bottom:20px;">2–3 October 2025 · Submitted by Ramy Hegab</p>
+          <div class="report-section-title">Executive Summary</div>
+          <p class="report-p">A productive two-day visit to Lahore covered three key partner agencies. Overall agent sentiment is positive with increased interest in postgraduate programmes. AECC (StudyReach) showed strong intent for the upcoming January intake, while Edify Group requires closer monitoring due to recent staff changes. Follow-up materials and updated commission structures should be dispatched within two weeks.</p>
+          <div class="report-section-title">Visit Summaries</div>
+          <div class="report-visit-block">
+            <div class="rvb-name">AECC (StudyReach) — Gullberg</div>
+            <div class="rvb-meta">2 Oct · 10:00 · Imran (Country Manager Pakistan)</div>
+            <div class="rvb-body">Strong relationship maintained. Agent confirmed 12 applications in pipeline for January 2026. Requested updated scholarship information for BSc programmes. Discussion on expanding to Faisalabad office — to be followed up.</div>
+          </div>
+          <div class="report-visit-block">
+            <div class="rvb-name">Times Consultant — Johar Town</div>
+            <div class="rvb-meta">2 Oct · 14:00 · Haris Dhnani</div>
+            <div class="rvb-body">Good engagement. Agent focusing heavily on foundation programmes. Requested in-person training session for new counsellors. Pipeline of 7 students confirmed for Sep 2026.</div>
+          </div>
+          <div class="report-visit-block" style="margin-bottom:16px;">
+            <div class="rvb-name">Edify Group — DHA</div>
+            <div class="rvb-meta">3 Oct · 09:30 · Bilal (Branch Manager)</div>
+            <div class="rvb-body">New branch manager in post since August. Relationship reset required. Provided full institution briefing. Lower expected output this cycle but long-term potential strong. Flag for senior support visit in Q1.</div>
+          </div>
+          <div class="report-section-title" style="color:var(--warn)">Action Items</div>
+          <div class="action-row"><span style="color:var(--accent3)">✓</span>Send updated scholarship brochures to AECC (StudyReach) by 10 Oct</div>
+          <div class="action-row"><span style="color:var(--accent3)">✓</span>Schedule counsellor training webinar for Times Consultant — Nov 2025</div>
+          <div class="action-row"><span style="color:var(--warn)">⚠</span>Flag Edify Group for HoD review — assign Q1 2026 senior support visit</div>
+          <div class="action-row"><span style="color:var(--text3)">○</span>Explore Faisalabad expansion opportunity with AECC — feasibility call Q4</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const agents=[
+  {id:1,name:'AECC',legal:'Australia Education Something',code:'AECAU01',status:'Active',hqCountry:'Australia',hqAddress:'Level 5, 350 Collins St, Melbourne',countries:['Egypt','India','Pakistan','Vietnam','UAE'],contact:'Mike Tyson',email:'miketyson@aecc.com.au',phone:'+44212321234',agreementEnd:'31/3/2027',branches:[{name:'Gullberg, Lahore',city:'Lahore',country:'Pakistan',contact:'Imran',role:'Country Manager',maps:'https://maps.app.goo.gl/xHua8DJtZUxXRwTu5'},{name:'Bolkky Alexandria',city:'Alexandria',country:'Egypt',contact:'—',role:'—',maps:''}]},
+  {id:2,name:'Times Consultant',legal:'Times Consultant',code:'TCPK01',status:'Active',hqCountry:'Pakistan',hqAddress:'Karachi PECHS',countries:['Pakistan'],contact:'Haris Dhnani',email:'haris@timesconsultant.com',phone:'—',agreementEnd:'31/3/2027',branches:[{name:'Johar Town, Lahore',city:'Lahore',country:'Pakistan',contact:'—',role:'Branch Manager',maps:''}]},
+  {id:3,name:'AHZ',legal:'A H & Z Associates Limited',code:'AHZGB01',status:'Active',hqCountry:'UK',hqAddress:'2nd Floor, 16 St Clare St, London EC3N 1LQ',countries:['India','Bangladesh','Nepal','Sri Lanka','Pakistan','Nigeria','UK'],contact:'Golam Mortuza',email:'mortuza@ahzassociates.co.uk',phone:'(207) 377-9630',agreementEnd:'31/3/2027',branches:[]},
+  {id:4,name:'Edify Group',legal:'Edify Group Ltd',code:'EDPK01',status:'Active',hqCountry:'Pakistan',hqAddress:'Lahore',countries:['Pakistan'],contact:'Bilal',email:'bilal@edify.pk',phone:'92',agreementEnd:'31/3/2027',branches:[{name:'DHA, Lahore',city:'Lahore',country:'Pakistan',contact:'Bilal',role:'Branch Manager',maps:'https://maps.app.goo.gl/SjL8FBBSwfnrskYN8'}]},
+  {id:5,name:'Edvoy (IEC Abroad)',legal:'Edvoy Previously IEC Abroad',code:'EDVOY01',status:'Active',hqCountry:'India',hqAddress:'Bangalore',countries:['India','Pakistan','UAE'],contact:'—',email:'—',phone:'—',agreementEnd:'31/12/2026',branches:[{name:'Gullberg, Lahore',city:'Lahore',country:'Pakistan',contact:'—',role:'Country Manager',maps:''},{name:'I8, Islamabad',city:'Islamabad',country:'Pakistan',contact:'—',role:'Branch Manager',maps:''}]},
+  {id:6,name:'AAS',legal:'AAS International',code:'AASCH01',status:'Active',hqCountry:'Switzerland',hqAddress:'Zurich',countries:['Switzerland','Germany','Austria'],contact:'—',email:'—',phone:'—',agreementEnd:'30/6/2026',branches:[]},
+  {id:7,name:'ABN',legal:'ABN Education',code:'ABNPK01',status:'Active',hqCountry:'Pakistan',hqAddress:'Lahore',countries:['Pakistan'],contact:'—',email:'—',phone:'—',agreementEnd:'31/3/2027',branches:[]},
+  {id:8,name:'Azent',legal:'Azent Overseas Education',code:'AEDIN01',status:'Active',hqCountry:'India',hqAddress:'Ahmedabad',countries:['India'],contact:'—',email:'—',phone:'—',agreementEnd:'31/3/2026',branches:[]},
+  {id:9,name:'AIMS Education',legal:'AIMS Education Group',code:'AGT-1270',status:'Active',hqCountry:'UAE',hqAddress:'Dubai',countries:['UAE','Egypt','Jordan'],contact:'—',email:'—',phone:'—',agreementEnd:'31/12/2025',branches:[]},
+  {id:10,name:'Amber Education',legal:'Amber Education Services Ltd',code:'AESCN01',status:'Active',hqCountry:'China',hqAddress:'Beijing',countries:['China'],contact:'—',email:'—',phone:'—',agreementEnd:'30/9/2026',branches:[]},
+];
+const visits=[
+  {id:1,day:1,time:'10:00',agent:'AECC',branch:'Gullberg, Lahore',contact:'Imran',type:'visit',status:'completed',notes:'Strong pipeline confirmed. 12 applications for Jan 2026. Wants scholarship info for BSc. Exploring Faisalabad expansion.'},
+  {id:2,day:1,time:'14:00',agent:'Times Consultant',branch:'Johar Town, Lahore',contact:'Haris Dhnani',type:'visit',status:'completed',notes:'Focused on foundation programmes. Counsellor training requested. 7 students pipeline for Sep 2026.'},
+  {id:3,day:2,time:'09:30',agent:'Edify Group',branch:'DHA, Lahore',contact:'Bilal',type:'visit',status:'completed',notes:'New branch manager since August. Full institution briefing given. Flag for senior support visit in Q1.'},
+];
+const notesList=[
+  {id:1,agent:'AECC — Gullberg, Lahore',date:'Thu 2 Oct 2025 · 10:00',preview:'Strong pipeline confirmed. 12 applications for Jan…',notes:'Strong pipeline confirmed. 12 applications for Jan 2026. Wants scholarship info for BSc. Exploring Faisalabad expansion.\n\nKey points discussed:\n• January 2026 intake: 12 confirmed applications\n• Scholarship brochures needed for BSc programmes\n• Faisalabad expansion — feasibility to explore\n• Agent very motivated, top performer in Pakistan region\n\nFollow-up actions:\n→ Send updated scholarship brochures by 10 Oct\n→ Call regarding Faisalabad feasibility by end of October'},
+  {id:2,agent:'Times Consultant — Johar Town',date:'Thu 2 Oct 2025 · 14:00',preview:'Focused on foundation programmes. Requested training…',notes:'Good engagement. Agent focusing heavily on foundation programmes. Requested in-person training session for new counsellors.\n\nPipeline of 7 students confirmed for Sep 2026.\n\nKey points:\n• Foundation programme interest very high\n• New counsellors need training — schedule November webinar\n• 7 confirmed students for Sep 2026'},
+  {id:3,agent:'Edify Group — DHA, Lahore',date:'Fri 3 Oct 2025 · 09:30',preview:'New branch manager since August. Relationship reset…',notes:'New branch manager in post since August. Relationship reset required. Provided full institution briefing.\n\nLower expected output this cycle but long-term potential strong.\n\nFlag for HoD review — assign Q1 2026 senior support visit.'},
+];
+let filtered=[...agents];
+
+function renderAgents(){
+  document.getElementById('agents-tbody').innerHTML=filtered.map(a=>`
+    <tr onclick="openPanel(${a.id})">
+      <td><div class="agent-name">${a.name}</div><div class="agent-code">${a.code}</div></td>
+      <td style="font-size:13px;color:var(--text2)">${a.hqCountry}<br><span style="font-size:11px;color:var(--text3)">${a.hqAddress.substring(0,28)}${a.hqAddress.length>28?'…':''}</span></td>
+      <td><div class="countries-wrap">${a.countries.slice(0,4).map(c=>`<span class="country-tag">${c}</span>`).join('')}${a.countries.length>4?`<span class="country-tag">+${a.countries.length-4}</span>`:''}</div></td>
+      <td style="font-size:12px;color:var(--text3)">Until ${a.agreementEnd}</td>
+      <td><span class="badge badge-${a.status.toLowerCase()}">${a.status}</span></td>
+      <td><span class="branch-count">${a.branches.length||'—'}</span></td>
+    </tr>`).join('');
+  document.getElementById('agent-count').textContent=`Showing ${filtered.length} agents`;
+}
+
+function filterAgents(){
+  const q=document.getElementById('agent-search').value.toLowerCase();
+  const c=document.getElementById('country-filter').value;
+  const s=document.getElementById('status-filter').value;
+  filtered=agents.filter(a=>{
+    const mq=!q||a.name.toLowerCase().includes(q)||a.code.toLowerCase().includes(q)||a.contact.toLowerCase().includes(q)||a.legal.toLowerCase().includes(q);
+    const mc=!c||a.countries.includes(c)||a.hqCountry===c;
+    const ms=!s||a.status===s;
+    return mq&&mc&&ms;
+  });
+  renderAgents();
+}
+
+function openPanel(id){
+  const a=agents.find(x=>x.id===id);
+  document.getElementById('panel-name').textContent=a.name;
+  document.getElementById('panel-code').textContent=`${a.code} · ${a.status}`;
+  document.getElementById('panel-body').innerHTML=`
+    <div class="panel-section">
+      <div class="panel-section-title">Headquarters</div>
+      <div class="info-row"><span class="info-label">Legal name</span><span class="info-value" style="font-size:12px">${a.legal}</span></div>
+      <div class="info-row"><span class="info-label">Country</span><span class="info-value">${a.hqCountry}</span></div>
+      <div class="info-row"><span class="info-label">Address</span><span class="info-value" style="font-size:12px">${a.hqAddress}</span></div>
+      <div class="info-row"><span class="info-label">Agreement</span><span class="info-value" style="font-size:12px">Until ${a.agreementEnd}</span></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-section-title">Main Contact</div>
+      <div class="info-row"><span class="info-label">Name</span><span class="info-value">${a.contact}</span></div>
+      <div class="info-row"><span class="info-label">Email</span><span class="info-value" style="font-size:12px;color:var(--accent)">${a.email}</span></div>
+      <div class="info-row"><span class="info-label">Phone</span><span class="info-value">${a.phone}</span></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-section-title">Countries of Operation</div>
+      <div class="countries-wrap">${a.countries.map(c=>`<span class="country-tag">${c}</span>`).join('')}</div>
+    </div>
+    ${a.branches.length?`<div class="panel-section">
+      <div class="panel-section-title">Branches (${a.branches.length})</div>
+      ${a.branches.map(b=>`<div class="branch-card">
+        <div class="branch-card-name">${b.name}</div>
+        <div class="branch-card-loc">📍 ${b.city}, ${b.country}</div>
+        <div class="branch-card-contact">${b.contact} · ${b.role}${b.maps?` · <a href="${b.maps}" target="_blank" class="map-link">View Map ↗</a>`:''}</div>
+      </div>`).join('')}
+    </div>`:''}
+    <div style="display:flex;gap:8px;margin-top:4px;">
+      <button class="btn btn-ghost btn-sm" style="flex:1" onclick="switchView('notes',null)">📝 Notes</button>
+      <button class="btn btn-primary btn-sm" style="flex:1" onclick="switchView('itinerary',null)">✈️ Plan Visit</button>
+    </div>`;
+  document.getElementById('detail-panel').classList.add('open');
+}
+function closePanel(){document.getElementById('detail-panel').classList.remove('open');}
+
+function renderTimeline(){
+  const days={};
+  visits.forEach(v=>{if(!days[v.day])days[v.day]=[];days[v.day].push(v);});
+  const dl={1:'Thu 2 Oct',2:'Fri 3 Oct'};
+  document.getElementById('timeline').innerHTML=Object.keys(days).map(d=>`
+    <div class="timeline-day">
+      <div class="day-label">
+        <div class="day-dot">D${d}</div>
+        <div><span class="day-text">Day ${d}</span><span class="day-date"> — ${dl[d]}</span></div>
+      </div>
+      ${days[d].map(v=>`<div class="visit-card">
+        <div class="visit-card-top">
+          <span class="visit-time">${v.time}</span>
+          <span class="act-badge act-visit">Agent Visit</span>
+          <span class="badge badge-active" style="margin-left:auto">${v.status}</span>
+        </div>
+        <div class="visit-agent">${v.agent}</div>
+        <div class="visit-branch">📍 ${v.branch} · ${v.contact}</div>
+        <div class="notes-preview">${v.notes.substring(0,110)}…</div>
+        <div class="visit-card-actions">
+          <button class="btn btn-ghost btn-sm" onclick="switchView('notes',null)">📝 Notes</button>
+          <button class="btn btn-ghost btn-sm">🗺️ Map</button>
+        </div>
+      </div>`).join('')}
+      <div class="add-visit-btn">+ Add visit to Day ${d}</div>
+    </div>`).join('');
+}
+
+function renderBranchPicker(){
+  const branches=[
+    {name:'AECC',branch:'Gullberg, Lahore',loc:'Lahore, PK'},
+    {name:'Times Consultant',branch:'Johar Town, Lahore',loc:'Lahore, PK'},
+    {name:'Edvoy',branch:'Gullberg, Lahore',loc:'Lahore, PK'},
+    {name:'Edify Group',branch:'DHA, Lahore',loc:'Lahore, PK'},
+    {name:'Edvoy',branch:'I8, Islamabad',loc:'Islamabad, PK'},
+  ];
+  document.getElementById('branch-picker').innerHTML=branches.map(b=>`
+    <div class="agent-select-item" onclick="this.classList.toggle('sel');this.querySelector('.check').textContent=this.classList.contains('sel')?'✓':''">
+      <div class="check"></div>
+      <div><div class="agent-select-name">${b.name}</div><div class="agent-select-loc">📍 ${b.branch} · ${b.loc}</div></div>
+    </div>`).join('');
+}
+
+function renderNotesList(){
+  document.getElementById('notes-list-items').innerHTML=notesList.map((n,i)=>`
+    <div class="note-item${i===0?' active':''}" onclick="selectNote(${n.id},this)">
+      <div class="note-item-agent">${n.agent}</div>
+      <div class="note-item-date">${n.date}</div>
+      <div class="note-item-preview">${n.preview}</div>
+    </div>`).join('');
+  loadNote(notesList[0]);
+}
+function selectNote(id,el){
+  document.querySelectorAll('.note-item').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  loadNote(notesList.find(n=>n.id===id));
+}
+function loadNote(n){
+  document.getElementById('note-title').textContent=n.agent;
+  document.getElementById('note-meta').textContent=`🤝 Agent Visit · ${n.date}`;
+  document.getElementById('main-notes').value=n.notes;
+}
+function saveNote(){
+  const btn=document.getElementById('save-btn');
+  btn.textContent='✓ Saved';btn.style.background='var(--accent3)';btn.style.color='#0d0f14';
+  setTimeout(()=>{btn.textContent='Save Notes';btn.style.background='';btn.style.color='';},1600);
+}
+
+function switchView(name,el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const titles={agents:'Agent Directory',itinerary:'Itinerary Planner',notes:'Visit Notes',reports:'AI Trip Reports'};
+  const acts={
+    agents:'<button class="btn btn-ghost btn-sm">⬆ Import CSV</button><button class="btn btn-primary btn-sm">+ Add Agent</button>',
+    itinerary:'<button class="btn btn-ghost btn-sm">📋 Export PDF</button><button class="btn btn-success btn-sm">✨ Generate AI Report</button>',
+    notes:'<button class="btn btn-primary btn-sm">+ New Visit Note</button>',
+    reports:'<button class="btn btn-ghost btn-sm">📄 Export All</button><button class="btn btn-primary btn-sm">✨ New Report</button>'
+  };
+  document.getElementById('page-title').textContent=titles[name]||'';
+  document.getElementById('topbar-actions').innerHTML=acts[name]||'';
+}
+
+renderAgents();renderTimeline();renderBranchPicker();renderNotesList();
+</script>
+</body>
+</html>

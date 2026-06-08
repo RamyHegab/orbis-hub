@@ -1,0 +1,151 @@
+<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg" font-family="Georgia, 'Times New Roman', serif">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&amp;family=DM+Sans:wght@400;500&amp;display=swap');
+    </style>
+
+    <!-- Deep navy background gradient -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1220"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+
+    <!-- Globe arc gradient - blue glow -->
+    <linearGradient id="arcGrad1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4f8ef7"/>
+      <stop offset="100%" stop-color="#1a56f0"/>
+    </linearGradient>
+
+    <!-- Gold accent gradient -->
+    <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f0c040"/>
+      <stop offset="50%" stop-color="#fde68a"/>
+      <stop offset="100%" stop-color="#f0c040"/>
+    </linearGradient>
+
+    <!-- Glow filter for globe -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Subtle glow for text -->
+    <filter id="textGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Clip circle for globe -->
+    <clipPath id="globeClip">
+      <circle cx="160" cy="250" r="78"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="18"/>
+
+  <!-- Subtle grid texture -->
+  <line x1="0" y1="166" x2="800" y2="166" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+  <line x1="0" y1="333" x2="800" y2="333" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+  <line x1="266" y1="0" x2="266" y2="500" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+  <line x1="533" y1="0" x2="533" y2="500" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+
+  <!-- ═══ GLOBE MARK ═══ -->
+
+  <!-- Outer glow ring -->
+  <circle cx="160" cy="250" r="90" fill="none" stroke="rgba(79,142,247,0.12)" stroke-width="18"/>
+  <circle cx="160" cy="250" r="82" fill="none" stroke="rgba(79,142,247,0.08)" stroke-width="6"/>
+
+  <!-- Globe base circle -->
+  <circle cx="160" cy="250" r="76" fill="#0d1a3a" stroke="url(#arcGrad1)" stroke-width="1.5"/>
+
+  <!-- Latitude lines (clipped inside globe) -->
+  <g clip-path="url(#globeClip)" opacity="0.35">
+    <ellipse cx="160" cy="250" rx="76" ry="20" fill="none" stroke="#4f8ef7" stroke-width="0.8"/>
+    <ellipse cx="160" cy="250" rx="76" ry="42" fill="none" stroke="#4f8ef7" stroke-width="0.6"/>
+    <ellipse cx="160" cy="250" rx="76" ry="62" fill="none" stroke="#4f8ef7" stroke-width="0.5"/>
+    <!-- Equator highlighted -->
+    <line x1="84" y1="250" x2="236" y2="250" stroke="#4f8ef7" stroke-width="1.2"/>
+  </g>
+
+  <!-- Longitude arcs (clipped) -->
+  <g clip-path="url(#globeClip)" opacity="0.35">
+    <ellipse cx="160" cy="250" rx="18" ry="76" fill="none" stroke="#4f8ef7" stroke-width="0.7"/>
+    <ellipse cx="160" cy="250" rx="38" ry="76" fill="none" stroke="#4f8ef7" stroke-width="0.6"/>
+    <ellipse cx="160" cy="250" rx="58" ry="76" fill="none" stroke="#4f8ef7" stroke-width="0.5"/>
+    <!-- Prime meridian highlighted -->
+    <line x1="160" y1="174" x2="160" y2="326" stroke="#4f8ef7" stroke-width="1.2"/>
+  </g>
+
+  <!-- Continent shapes (simplified, stylised) -->
+  <g clip-path="url(#globeClip)" opacity="0.55">
+    <!-- Europe/UK blob -->
+    <ellipse cx="148" cy="220" rx="14" ry="10" fill="#3a6fd8" opacity="0.7"/>
+    <!-- Africa blob -->
+    <ellipse cx="152" cy="255" rx="12" ry="18" fill="#3a6fd8" opacity="0.6"/>
+    <!-- South Asia blob -->
+    <ellipse cx="182" cy="248" rx="10" ry="8" fill="#3a6fd8" opacity="0.6"/>
+    <!-- SE Asia dots -->
+    <circle cx="196" cy="258" r="4" fill="#3a6fd8" opacity="0.5"/>
+    <circle cx="202" cy="252" r="3" fill="#3a6fd8" opacity="0.4"/>
+  </g>
+
+  <!-- Flight path arc over globe — the signature element -->
+  <path d="M 106 288 Q 160 195 214 222" fill="none" stroke="url(#goldGrad)" stroke-width="2" stroke-dasharray="4 3" filter="url(#glow)"/>
+  <!-- Departure dot -->
+  <circle cx="106" cy="288" r="4" fill="#f0c040" filter="url(#glow)"/>
+  <!-- Arrival dot -->
+  <circle cx="214" cy="222" r="4" fill="#fde68a" filter="url(#glow)"/>
+  <!-- Mid-flight marker -->
+  <circle cx="160" cy="202" r="3" fill="white" opacity="0.8"/>
+
+  <!-- Globe outer ring final -->
+  <circle cx="160" cy="250" r="76" fill="none" stroke="url(#arcGrad1)" stroke-width="1.5"/>
+
+  <!-- ═══ WORDMARK ═══ -->
+
+  <!-- ORBIS -->
+  <text
+    x="268" y="240"
+    font-family="'Cormorant Garamond', Georgia, serif"
+    font-size="88"
+    font-weight="700"
+    letter-spacing="-1"
+    fill="white"
+    filter="url(#textGlow)"
+  >ORBIS</text>
+
+  <!-- Thin gold rule under ORBIS -->
+  <rect x="268" y="254" width="390" height="1.5" fill="url(#goldGrad)" opacity="0.7"/>
+
+  <!-- IO Buddy -->
+  <text
+    x="272" y="292"
+    font-family="'DM Sans', Arial, sans-serif"
+    font-size="22"
+    font-weight="500"
+    letter-spacing="8"
+    fill="#8eaaee"
+  >THE IO BUDDY</text>
+
+  <!-- ═══ TAGLINE ═══ -->
+  <text
+    x="268" y="338"
+    font-family="'DM Sans', Arial, sans-serif"
+    font-size="13"
+    font-weight="400"
+    letter-spacing="3"
+    fill="rgba(255,255,255,0.28)"
+  >INTERNATIONAL OFFICE CRM</text>
+
+  <!-- ═══ DECORATIVE CORNER MARKS ═══ -->
+  <!-- Top left corner bracket -->
+  <path d="M 28 28 L 28 52 M 28 28 L 52 28" stroke="rgba(79,142,247,0.3)" stroke-width="1.5" fill="none"/>
+  <!-- Top right -->
+  <path d="M 772 28 L 772 52 M 772 28 L 748 28" stroke="rgba(79,142,247,0.3)" stroke-width="1.5" fill="none"/>
+  <!-- Bottom left -->
+  <path d="M 28 472 L 28 448 M 28 472 L 52 472" stroke="rgba(79,142,247,0.3)" stroke-width="1.5" fill="none"/>
+  <!-- Bottom right -->
+  <path d="M 772 472 L 772 448 M 772 472 L 748 472" stroke="rgba(79,142,247,0.3)" stroke-width="1.5" fill="none"/>
+
+</svg>

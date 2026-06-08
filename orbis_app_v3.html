@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orbis — The IO Buddy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:    #f7f0e6;
+  --cream2:   #ede4d6;
+  --cream3:   #e4d9c8;
+  --white:    #fdfaf6;
+  --brown:    #2e1a0e;
+  --brown2:   #6b3f1e;
+  --brown3:   #9a7a60;
+  --border:   #ddd0be;
+  --border2:  #cfc0a8;
+  --teal:     #2d7a6e;
+  --teal2:    #4db89e;
+  --teal-bg:  #e8f5f2;
+  --terra:    #c8873a;
+  --terra-bg: #fdf3e4;
+  --gold:     #e8a84a;
+  --sienna:   #a05e35;
+  --forest:   #1a2e28;
+  --forest2:  #243d35;
+  --red:      #b03a2e;
+  --red-bg:   #fdf0ee;
+  --sidebar:  230px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--brown);display:flex;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar);background:var(--forest);
+  display:flex;flex-direction:column;flex-shrink:0;
+  border-right:1px solid rgba(255,255,255,0.06);
+}
+.sidebar-logo{
+  padding:26px 20px 22px;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+}
+.logo-wordmark{
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;font-weight:700;letter-spacing:-0.5px;
+  color:#f2e6d4;line-height:1;
+}
+.logo-sub{
+  font-size:10px;font-weight:500;letter-spacing:4px;
+  text-transform:uppercase;color:var(--teal2);margin-top:5px;
+}
+.logo-tagline{
+  font-size:9px;color:rgba(242,230,212,0.3);
+  letter-spacing:2px;text-transform:uppercase;margin-top:3px;
+}
+
+.sidebar-nav{flex:1;padding:16px 10px;}
+.nav-group{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.2);padding:14px 12px 6px;font-weight:600;}
+.nav-btn{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;
+  border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;
+  color:rgba(242,230,212,0.5);transition:all .15s;margin-bottom:2px;
+  border:none;background:none;width:100%;text-align:left;
+  font-family:'DM Sans',sans-serif;
+}
+.nav-btn:hover{background:rgba(255,255,255,0.06);color:rgba(242,230,212,0.85);}
+.nav-btn.active{background:rgba(77,184,158,0.15);color:#f2e6d4;}
+.nav-btn .ni{width:18px;font-size:14px;opacity:0.7;}
+.nav-btn.active .ni{opacity:1;}
+.nav-badge{margin-left:auto;background:var(--terra);color:white;font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;}
+.nav-btn.dim{opacity:0.25;cursor:default;pointer-events:none;}
+.nav-divider{height:1px;background:rgba(255,255,255,0.06);margin:8px 12px;}
+
+.sidebar-user{
+  margin:12px;padding:12px 14px;background:rgba(255,255,255,0.05);
+  border-radius:10px;border:1px solid rgba(255,255,255,0.07);
+  display:flex;align-items:center;gap:10px;
+}
+.user-av{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--terra),var(--sienna));
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:white;
+}
+.user-name{font-size:12px;font-weight:600;color:#f2e6d4;}
+.user-role{font-size:10px;color:rgba(242,230,212,0.35);}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{
+  height:58px;background:var(--white);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 28px;gap:14px;flex-shrink:0;
+}
+.topbar-bc{display:flex;align-items:center;gap:8px;font-size:13px;}
+.bc-link{color:var(--brown3);cursor:pointer;}
+.bc-link:hover{color:var(--teal);}
+.bc-sep{color:var(--border2);}
+.bc-cur{font-weight:600;color:var(--brown);}
+.topbar-right{margin-left:auto;display:flex;gap:8px;align-items:center;}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;
+  cursor:pointer;border:none;font-family:'DM Sans',sans-serif;
+  transition:all .15s;white-space:nowrap;
+}
+.btn-primary{background:var(--forest);color:#f2e6d4;}
+.btn-primary:hover{background:var(--forest2);}
+.btn-teal{background:var(--teal);color:white;}
+.btn-teal:hover{background:#256860;}
+.btn-terra{background:var(--terra);color:white;}
+.btn-terra:hover{background:#b57530;}
+.btn-outline{background:transparent;color:var(--brown2);border:1.5px solid var(--border2);}
+.btn-outline:hover{border-color:var(--brown3);background:var(--cream2);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-xs{padding:4px 9px;font-size:11px;border-radius:6px;}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow:hidden;display:flex;}
+.view{display:none;flex:1;overflow:hidden;flex-direction:column;}
+.view.active{display:flex;}
+
+/* ══ TAGS ══ */
+.tag{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+.tag-teal{background:var(--teal-bg);color:var(--teal);}
+.tag-terra{background:var(--terra-bg);color:var(--terra);}
+.tag-sienna{background:#fdf0e6;color:var(--sienna);}
+.tag-brown{background:var(--cream2);color:var(--brown2);border:1px solid var(--border);}
+.tag-red{background:var(--red-bg);color:var(--red);}
+.tag-gold{background:#fdf7e4;color:#8a6010;}
+
+/* ══════════════════════
+   AGENTS VIEW
+══════════════════════ */
+.agents-shell{display:flex;flex:1;overflow:hidden;}
+
+/* List panel */
+.alp{width:340px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--white);}
+.alp-top{padding:16px;border-bottom:1px solid var(--border);}
+.alp-search{position:relative;margin-bottom:10px;}
+.alp-search input{
+  width:100%;padding:9px 12px 9px 34px;border-radius:8px;
+  border:1.5px solid var(--border);background:var(--cream);
+  font-size:13px;color:var(--brown);font-family:'DM Sans',sans-serif;outline:none;
+  transition:border-color .15s;
+}
+.alp-search input:focus{border-color:var(--teal);background:var(--white);}
+.alp-search input::placeholder{color:var(--brown3);}
+.alp-search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--brown3);font-size:13px;}
+.alp-filters{display:flex;gap:5px;flex-wrap:wrap;}
+.chip{
+  padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;
+  border:1.5px solid var(--border);background:transparent;cursor:pointer;
+  color:var(--brown3);transition:all .12s;font-family:'DM Sans',sans-serif;
+}
+.chip:hover{border-color:var(--teal);color:var(--teal);}
+.chip.on{background:var(--teal);color:white;border-color:var(--teal);}
+.alp-count{font-size:11px;color:var(--brown3);padding:8px 16px 6px;border-bottom:1px solid var(--border);}
+.agent-list{flex:1;overflow-y:auto;}
+
+.agent-row{
+  display:flex;align-items:center;gap:12px;padding:13px 16px;
+  border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;
+}
+.agent-row:hover{background:var(--cream);}
+.agent-row.active{background:var(--teal-bg);border-left:3px solid var(--teal);}
+.ar-av{
+  width:40px;height:40px;border-radius:10px;flex-shrink:0;
+  background:var(--cream2);border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;
+  color:var(--brown2);text-transform:uppercase;
+}
+.ar-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ar-sub{font-size:11px;color:var(--brown3);margin-top:2px;}
+.ar-right{flex-shrink:0;text-align:right;}
+.ar-country{font-size:11px;color:var(--brown3);}
+.ar-branch{display:inline-block;margin-top:3px;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600;background:var(--terra-bg);color:var(--terra);}
+
+/* Detail panel */
+.adp{flex:1;overflow:hidden;display:flex;flex-direction:column;background:var(--cream);}
+.adp-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--brown3);gap:10px;}
+.adp-empty-icon{font-size:44px;opacity:0.25;}
+.adp-empty-hint{font-size:13px;font-style:italic;}
+
+.adp-hd{background:var(--white);border-bottom:1px solid var(--border);padding:22px 26px;display:flex;align-items:flex-start;justify-content:space-between;}
+.adp-name{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--brown);line-height:1.1;}
+.adp-legal{font-size:12px;color:var(--brown3);margin-top:4px;}
+.adp-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+
+.adp-tabs{display:flex;background:var(--white);border-bottom:1px solid var(--border);padding:0 26px;}
+.adp-tab{
+  padding:12px 16px;font-size:13px;font-weight:500;color:var(--brown3);
+  cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;margin-bottom:-1px;
+}
+.adp-tab:hover{color:var(--brown);}
+.adp-tab.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:600;}
+
+.adp-body{flex:1;overflow-y:auto;padding:22px 26px;}
+
+/* Info grid */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+.info-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.info-card.full{grid-column:1/-1;}
+.ic-label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--brown3);font-weight:600;margin-bottom:4px;}
+.ic-val{font-size:14px;font-weight:600;color:var(--brown);}
+.ic-sub{font-size:11px;color:var(--brown3);margin-top:2px;}
+
+/* Contact card */
+.contact-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+.cc-av{width:38px;height:38px;border-radius:50%;background:var(--cream2);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--brown2);flex-shrink:0;}
+.cc-name{font-size:13px;font-weight:600;}
+.cc-role{font-size:11px;color:var(--brown3);margin-top:1px;}
+.cc-email{font-size:11px;color:var(--teal);margin-top:2px;}
+.cc-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px;}
+
+/* Branch card */
+.branch-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;}
+.bc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+.bc-name{font-size:13px;font-weight:700;color:var(--brown);}
+.bc-loc{font-size:12px;color:var(--brown3);margin-top:2px;}
+.bc-contact{display:flex;align-items:center;gap:10px;padding-top:10px;border-top:1px solid var(--border);}
+.bc-cav{width:28px;height:28px;border-radius:50%;background:var(--cream2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--brown3);}
+.bc-cname{font-size:12px;font-weight:600;}
+.bc-crole{font-size:11px;color:var(--brown3);}
+
+/* Countries */
+.cstrip{display:flex;flex-wrap:wrap;gap:5px;}
+.ctag{padding:3px 9px;border-radius:6px;font-size:11px;font-weight:500;background:var(--cream2);color:var(--brown2);border:1px solid var(--border);}
+
+.sec-hd{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:var(--brown);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.sec-hd span{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--brown3);font-weight:400;}
+
+/* ══════════════════════
+   ITINERARY VIEW
+══════════════════════ */
+.itin-shell{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.itin-bar{background:var(--white);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;gap:12px;align-items:center;flex-shrink:0;}
+.trip-input{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;border:none;outline:none;background:transparent;color:var(--brown);flex:1;}
+.trip-input::placeholder{color:var(--brown3);}
+.itin-body{flex:1;overflow:hidden;display:flex;}
+.itin-left{flex:1;overflow-y:auto;padding:22px 24px;}
+.itin-right{width:296px;flex-shrink:0;background:var(--white);border-left:1px solid var(--border);overflow-y:auto;padding:18px;}
+
+.trip-stats{display:flex;gap:10px;margin-bottom:22px;}
+.ts{flex:1;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
+.ts-val{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--brown);}
+.ts-label{font-size:10px;color:var(--brown3);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+.ts.hl .ts-val{color:var(--teal);}
+
+.day-block{margin-bottom:26px;}
+.day-hd{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.day-num{width:34px;height:34px;border-radius:50%;background:var(--forest);color:#f2e6d4;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;flex-shrink:0;}
+.day-label{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:var(--brown);}
+.day-date{font-size:12px;color:var(--brown3);margin-left:4px;}
+
+.visit-block{
+  background:var(--white);border:1px solid var(--border);border-radius:12px;
+  padding:14px 16px;margin-bottom:8px;margin-left:46px;
+  transition:border-color .15s,box-shadow .15s;
+}
+.visit-block:hover{border-color:var(--teal2);box-shadow:0 2px 14px rgba(45,122,110,0.07);}
+.vb-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.vb-time{font-size:12px;font-weight:700;color:var(--teal);font-family:monospace;}
+.vb-type{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+.vb-visit{background:var(--teal-bg);color:var(--teal);}
+.vb-fair{background:var(--terra-bg);color:var(--terra);}
+.vb-dinner{background:#fdf7e4;color:#8a6010;}
+.vb-agent{font-size:14px;font-weight:700;color:var(--brown);}
+.vb-branch{font-size:12px;color:var(--brown3);margin-top:2px;}
+.vb-notes{margin-top:10px;padding:10px 12px;background:var(--cream);border-radius:8px;font-size:12px;color:var(--brown2);line-height:1.6;border-left:3px solid var(--terra);}
+.vb-actions{display:flex;gap:6px;margin-top:10px;}
+.add-stop{margin-left:46px;border:1.5px dashed var(--border2);border-radius:10px;padding:10px;text-align:center;color:var(--brown3);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;margin-bottom:8px;}
+.add-stop:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-bg);}
+
+/* Form */
+.form-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;color:var(--brown);margin-bottom:16px;}
+.ff{margin-bottom:12px;}
+.fl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--brown3);margin-bottom:5px;display:block;}
+.fi,.fs,.fta{
+  width:100%;padding:8px 10px;border:1.5px solid var(--border);
+  border-radius:8px;font-size:13px;color:var(--brown);
+  font-family:'DM Sans',sans-serif;outline:none;background:var(--cream);transition:border-color .15s;
+}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--teal);background:var(--white);}
+.fta{resize:vertical;min-height:70px;}
+.bp-item{
+  display:flex;align-items:center;gap:8px;padding:9px 10px;
+  background:var(--cream);border:1.5px solid var(--border);border-radius:8px;
+  margin-bottom:6px;cursor:pointer;transition:all .12s;
+}
+.bp-item:hover,.bp-item.sel{border-color:var(--teal);background:var(--teal-bg);}
+.bp-check{width:16px;height:16px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;transition:all .12s;}
+.bp-item.sel .bp-check{background:var(--teal);border-color:var(--teal);color:white;}
+.bp-name{font-size:12px;font-weight:600;color:var(--brown);}
+.bp-loc{font-size:11px;color:var(--brown3);}
+.dist-badge{font-size:10px;color:var(--teal);font-weight:600;background:var(--teal-bg);padding:1px 6px;border-radius:10px;margin-left:auto;}
+
+/* ══════════════════════
+   NOTES VIEW
+══════════════════════ */
+.notes-shell{flex:1;display:flex;overflow:hidden;}
+.notes-sidebar{width:270px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;}
+.ns-hd{padding:16px;border-bottom:1px solid var(--border);font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--brown);}
+.note-item{padding:13px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;}
+.note-item:hover{background:var(--cream);}
+.note-item.active{background:var(--teal-bg);border-left:3px solid var(--teal);}
+.ni-agent{font-size:13px;font-weight:600;color:var(--brown);}
+.ni-date{font-size:11px;color:var(--brown3);margin-top:2px;}
+.ni-preview{font-size:11px;color:var(--brown3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.notes-editor{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.ne-hd{padding:18px 24px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;}
+.ne-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--brown);}
+.ne-meta{font-size:12px;color:var(--brown3);margin-top:3px;}
+.ne-ta{flex:1;border:none;outline:none;padding:22px 24px;font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.8;color:var(--brown);resize:none;background:var(--cream);}
+.ne-foot{padding:12px 20px;background:var(--white);border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.ai-ind{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--teal);font-weight:600;background:var(--teal-bg);padding:5px 12px;border-radius:20px;}
+
+/* ══════════════════════
+   MAIL VIEW
+══════════════════════ */
+.mail-shell{flex:1;display:flex;overflow:hidden;}
+.mail-left{width:320px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;}
+.ml-top{padding:16px;border-bottom:1px solid var(--border);}
+.ml-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--brown);margin-bottom:12px;}
+.seg-tabs{display:flex;gap:4px;flex-wrap:wrap;}
+.seg{
+  flex:1;min-width:60px;padding:6px 6px;border-radius:7px;font-size:11px;font-weight:600;
+  text-align:center;cursor:pointer;border:1.5px solid var(--border);
+  color:var(--brown3);transition:all .12s;font-family:'DM Sans',sans-serif;
+}
+.seg:hover{border-color:var(--teal);color:var(--teal);}
+.seg.on{background:var(--forest);color:#f2e6d4;border-color:var(--forest);}
+.mail-contacts{flex:1;overflow-y:auto;}
+.mc-item{
+  padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;
+  display:flex;align-items:flex-start;gap:10px;transition:background .1s;
+}
+.mc-item:hover{background:var(--cream);}
+.mc-sel{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;transition:all .12s;}
+.mc-sel.ck{background:var(--teal);border-color:var(--teal);color:white;}
+.mc-av{width:34px;height:34px;border-radius:50%;background:var(--cream2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--brown2);flex-shrink:0;}
+.mc-name{font-size:13px;font-weight:600;color:var(--brown);}
+.mc-agent{font-size:11px;color:var(--brown3);}
+.mc-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;}
+
+.mail-right{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--cream);}
+.mr-hd{background:var(--white);border-bottom:1px solid var(--border);padding:18px 24px;display:flex;align-items:center;gap:12px;}
+.mr-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--brown);}
+.mr-rec{font-size:12px;color:var(--brown3);}
+.mr-body{flex:1;overflow-y:auto;padding:20px 24px;}
+
+.compose-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:14px;}
+.cf{margin-bottom:14px;}
+.cl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--brown3);margin-bottom:6px;display:block;}
+.ci,.cs{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;color:var(--brown);font-family:'DM Sans',sans-serif;outline:none;background:var(--cream);transition:border-color .15s;}
+.ci:focus,.cs:focus{border-color:var(--teal);background:var(--white);}
+.cta{width:100%;min-height:160px;padding:12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;color:var(--brown);font-family:'DM Sans',sans-serif;outline:none;resize:vertical;background:var(--cream);line-height:1.7;}
+.cta:focus{border-color:var(--teal);background:var(--white);}
+
+.notice{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:8px;font-size:12px;margin-bottom:14px;}
+.notice-terra{background:var(--terra-bg);border:1px solid #e8c070;color:var(--terra);}
+.notice-teal{background:var(--teal-bg);border:1px solid var(--teal2);color:var(--teal);}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+
+/* FADE IN */
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.agent-row,.visit-block,.branch-card,.contact-card,.mc-item{animation:fadeUp .18s ease both;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-wordmark">Orbis</div>
+    <div class="logo-sub">The IO Buddy</div>
+    <div class="logo-tagline">International Office CRM</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">Manage</div>
+    <button class="nav-btn active" onclick="switchView('agents',this)">
+      <span class="ni">🏢</span> Agents <span class="nav-badge">177</span>
+    </button>
+    <button class="nav-btn" onclick="switchView('itinerary',this)">
+      <span class="ni">✈️</span> Itinerary Planner
+    </button>
+    <button class="nav-btn" onclick="switchView('notes',this)">
+      <span class="ni">📝</span> Visit Notes
+    </button>
+    <div class="nav-divider"></div>
+    <div class="nav-group">Comms</div>
+    <button class="nav-btn" onclick="switchView('mail',this)">
+      <span class="ni">✉️</span> Mailing
+    </button>
+    <div class="nav-divider"></div>
+    <div class="nav-group">Coming Soon</div>
+    <button class="nav-btn dim"><span class="ni">✨</span> AI Reports</button>
+    <button class="nav-btn dim"><span class="ni">📊</span> Performance</button>
+    <button class="nav-btn dim"><span class="ni">🎓</span> Student Intake</button>
+    <div class="nav-divider"></div>
+    <button class="nav-btn dim"><span class="ni">⚙️</span> Settings</button>
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-av">RH</div>
+    <div>
+      <div class="user-name">Ramy Hegab</div>
+      <div class="user-role">Account Manager</div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-bc" id="bc"><span class="bc-cur">Agents</span></div>
+    <div class="topbar-right" id="tbr">
+      <button class="btn btn-outline btn-sm">⬆ Import CSV</button>
+      <button class="btn btn-primary btn-sm">+ Add Agent</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- ═══ AGENTS ═══ -->
+    <div class="view active" id="view-agents">
+      <div class="agents-shell">
+        <div class="alp">
+          <div class="alp-top">
+            <div class="alp-search">
+              <span class="alp-search-icon">⌕</span>
+              <input id="asearch" type="text" placeholder="Search agents, codes, contacts…" oninput="filterAgents()">
+            </div>
+            <div class="alp-filters">
+              <button class="chip on" onclick="setCF('',this)">All</button>
+              <button class="chip" onclick="setCF('Pakistan',this)">Pakistan</button>
+              <button class="chip" onclick="setCF('India',this)">India</button>
+              <button class="chip" onclick="setCF('China',this)">China</button>
+              <button class="chip" onclick="setCF('UAE',this)">UAE</button>
+            </div>
+          </div>
+          <div class="alp-count" id="alp-count">177 agents</div>
+          <div class="agent-list" id="agent-list"></div>
+        </div>
+        <div class="adp" id="adp">
+          <div class="adp-empty" id="adp-empty">
+            <div class="adp-empty-icon">🏢</div>
+            <div class="adp-empty-hint">Select an agent to view details</div>
+          </div>
+          <div id="adp-inner" style="display:none;flex:1;overflow:hidden;flex-direction:column;">
+            <div class="adp-hd" id="adp-hd"></div>
+            <div class="adp-tabs">
+              <div class="adp-tab active" onclick="setTab('overview',this)">Overview</div>
+              <div class="adp-tab" onclick="setTab('branches',this)">Branches</div>
+              <div class="adp-tab" onclick="setTab('contacts',this)">Contacts</div>
+            </div>
+            <div class="adp-body" id="adp-body"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ITINERARY ═══ -->
+    <div class="view" id="view-itinerary">
+      <div class="itin-shell">
+        <div class="itin-bar">
+          <input class="trip-input" value="Pakistan — Lahore · Oct 2025" placeholder="Name this trip…">
+          <button class="btn btn-outline btn-sm">📋 Export PDF</button>
+          <button class="btn btn-teal btn-sm">✨ Generate AI Report</button>
+        </div>
+        <div class="itin-body">
+          <div class="itin-left">
+            <div class="trip-stats">
+              <div class="ts"><div class="ts-val">3</div><div class="ts-label">Visits</div></div>
+              <div class="ts"><div class="ts-val">2</div><div class="ts-label">Days</div></div>
+              <div class="ts hl"><div class="ts-val">Lahore</div><div class="ts-label">City</div></div>
+              <div class="ts"><div class="ts-val" style="color:var(--terra)">Pakistan</div><div class="ts-label">Country</div></div>
+            </div>
+            <div id="timeline"></div>
+          </div>
+          <div class="itin-right">
+            <div class="form-title">Add a Visit</div>
+            <div class="ff"><label class="fl">Day</label>
+              <select class="fs"><option>Day 1 — Thu 2 Oct</option><option>Day 2 — Fri 3 Oct</option></select></div>
+            <div class="ff"><label class="fl">Time</label><input class="fi" type="time" value="10:00"></div>
+            <div class="ff"><label class="fl">Activity</label>
+              <select class="fs">
+                <option>🤝 Agent Visit</option><option>📢 Education Fair</option>
+                <option>📞 Call / Meeting</option><option>🍽️ Networking Dinner</option>
+              </select></div>
+            <div class="ff">
+              <label class="fl">Branch <span style="color:var(--teal);font-size:10px;letter-spacing:0">• Sorted by proximity</span></label>
+              <div id="branch-picker"></div>
+            </div>
+            <div class="ff"><label class="fl">Pre-visit Notes</label>
+              <textarea class="fta" placeholder="Objectives, talking points…"></textarea></div>
+            <button class="btn btn-primary" style="width:100%" onclick="alert('Visit added!')">Add to Itinerary</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ NOTES ═══ -->
+    <div class="view" id="view-notes">
+      <div class="notes-shell">
+        <div class="notes-sidebar">
+          <div class="ns-hd">Visit Notes</div>
+          <div id="notes-list"></div>
+        </div>
+        <div class="notes-editor">
+          <div class="ne-hd">
+            <div>
+              <div class="ne-title" id="ne-title">AECC — Gullberg, Lahore</div>
+              <div class="ne-meta" id="ne-meta">🤝 Agent Visit · Thu 2 Oct 2025 · 10:00</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="tag tag-teal">✓ Completed</span>
+              <button class="btn btn-outline btn-sm">Share</button>
+            </div>
+          </div>
+          <textarea class="ne-ta" id="ne-ta"></textarea>
+          <div class="ne-foot">
+            <div class="ai-ind">✦ AI Ready</div>
+            <span style="font-size:12px;color:var(--brown3)">Notes will auto-generate your trip report</span>
+            <button class="btn btn-teal btn-sm" id="save-btn" style="margin-left:auto" onclick="saveNote()">Save Notes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ MAIL ═══ -->
+    <div class="view" id="view-mail">
+      <div class="mail-shell">
+        <div class="mail-left">
+          <div class="ml-top">
+            <div class="ml-title">Mailing</div>
+            <div class="seg-tabs">
+              <button class="seg on" onclick="setSeg('all',this)">All</button>
+              <button class="seg" onclick="setSeg('financial',this)">Financial</button>
+              <button class="seg" onclick="setSeg('operational',this)">Operational</button>
+              <button class="seg" onclick="setSeg('marketing',this)">Marketing</button>
+            </div>
+          </div>
+          <div class="mail-contacts" id="mail-contacts"></div>
+        </div>
+        <div class="mail-right">
+          <div class="mr-hd">
+            <div>
+              <div class="mr-title">New Message</div>
+              <div class="mr-rec" id="mr-rec">0 recipients selected</div>
+            </div>
+            <div style="margin-left:auto;display:flex;gap:8px">
+              <button class="btn btn-outline btn-sm">Save Draft</button>
+              <button class="btn btn-teal btn-sm" onclick="alert('Message sent!')">Send ✉️</button>
+            </div>
+          </div>
+          <div class="mr-body">
+            <div class="notice notice-teal">
+              🔒 <div><strong>Secure Mailing.</strong> Contacts tagged <em>Financial / Contractual</em> are the only recipients permitted for commission statements, fee schedules, and agreement renewals. Operational and Marketing contacts are automatically excluded from this category.</div>
+            </div>
+            <div class="compose-card">
+              <div class="cf"><label class="cl">Category</label>
+                <select class="cs" id="mail-cat" onchange="updateWarning()">
+                  <option value="general">📢 General Communication</option>
+                  <option value="marketing">🎓 Marketing & Recruitment</option>
+                  <option value="financial">💰 Financial / Contractual</option>
+                  <option value="operational">⚙️ Operational Update</option>
+                </select></div>
+              <div class="cf"><label class="cl">Subject</label>
+                <input class="ci" type="text" placeholder="e.g. January 2026 Intake Update"></div>
+              <div id="mail-warning"></div>
+              <div class="cf"><label class="cl">Message</label>
+                <textarea class="cta" placeholder="Type your message…&#10;&#10;Use {agent_name}, {contact_name} as personalisation tokens."></textarea></div>
+              <div class="cf"><label class="cl">Attachments</label>
+                <button class="btn btn-outline btn-sm">📎 Add file</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+// ═══ DATA ═══
+const agents=[
+  {id:1,name:'AECC',legal:'Australia Education Something',code:'AECAU01',status:'Active',hqCountry:'Australia',hqCity:'Melbourne',hqAddr:'Level 5, 350 Collins St, Melbourne',countries:['Egypt','India','Pakistan','Vietnam','UAE'],agreementEnd:'31/3/2027',
+   branches:[{name:'Gullberg, Lahore',city:'Lahore',country:'Pakistan',contact:'Imran',role:'Country Manager Pakistan',email:'imran@aecc.com.au',maps:'https://maps.app.goo.gl/xHua8DJtZUxXRwTu5'},{name:'Bolkky Alexandria',city:'Alexandria',country:'Egypt',contact:'—',role:'Branch Manager',email:'',maps:''}],
+   contacts:[{name:'Mike Tyson',role:'CEO / Owner',email:'miketyson@aecc.com.au',phone:'+44212321234',tags:['financial','contractual']},{name:'Imran Khan',role:'Country Manager PK',email:'imran@aecc.com.au',phone:'+923120000',tags:['operational']},{name:'Sara Ahmed',role:'Marketing Lead',email:'sara@aecc.com.au',phone:'',tags:['marketing']}]},
+  {id:2,name:'Times Consultant',legal:'Times Consultant',code:'TCPK01',status:'Active',hqCountry:'Pakistan',hqCity:'Karachi',hqAddr:'Karachi PECHS, Pakistan',countries:['Pakistan'],agreementEnd:'31/3/2027',
+   branches:[{name:'Johar Town, Lahore',city:'Lahore',country:'Pakistan',contact:'—',role:'Branch Manager',email:'',maps:''}],
+   contacts:[{name:'Haris Dhnani',role:'Owner / CEO',email:'haris@timesconsultant.com',phone:'',tags:['financial','contractual']},{name:'Ayesha Malik',role:'Operations Manager',email:'ayesha@timesconsultant.com',phone:'',tags:['operational']}]},
+  {id:3,name:'AHZ',legal:'A H & Z Associates Limited',code:'AHZGB01',status:'Active',hqCountry:'UK',hqCity:'London',hqAddr:'2nd Floor, 16 St Clare St, London EC3N 1LQ',countries:['India','Bangladesh','Nepal','Sri Lanka','Pakistan','Nigeria','UK'],agreementEnd:'31/3/2027',
+   branches:[],
+   contacts:[{name:'Golam Mortuza',role:'Director',email:'mortuza@ahzassociates.co.uk',phone:'(207) 377-9630',tags:['financial','contractual']},{name:'Priya Sharma',role:'UK Coordinator',email:'priya@ahzassociates.co.uk',phone:'',tags:['operational','marketing']}]},
+  {id:4,name:'Edify Group',legal:'Edify Group Ltd',code:'EDPK01',status:'Active',hqCountry:'Pakistan',hqCity:'Lahore',hqAddr:'Lahore, Pakistan',countries:['Pakistan'],agreementEnd:'31/3/2027',
+   branches:[{name:'DHA, Lahore',city:'Lahore',country:'Pakistan',contact:'Bilal',role:'Branch Manager',email:'bilal@edify.pk',maps:'https://maps.app.goo.gl/SjL8FBBSwfnrskYN8'}],
+   contacts:[{name:'Bilal Chaudhry',role:'Branch Manager',email:'bilal@edify.pk',phone:'92',tags:['financial','operational']}]},
+  {id:5,name:'Edvoy (IEC Abroad)',legal:'Edvoy Previously IEC Abroad',code:'EDVOY01',status:'Active',hqCountry:'India',hqCity:'Bangalore',hqAddr:'Bangalore, India',countries:['India','Pakistan','UAE'],agreementEnd:'31/12/2026',
+   branches:[{name:'Gullberg, Lahore',city:'Lahore',country:'Pakistan',contact:'—',role:'Country Manager',email:'',maps:''},{name:'I8, Islamabad',city:'Islamabad',country:'Pakistan',contact:'—',role:'Branch Manager',email:'',maps:''}],
+   contacts:[{name:'Rohit Sharma',role:'CEO',email:'rohit@edvoy.com',phone:'',tags:['financial','contractual']},{name:'Zara Ali',role:'Pakistan Country Manager',email:'zara@edvoy.com',phone:'',tags:['operational']}]},
+  {id:6,name:'AAS',legal:'AAS International',code:'AASCH01',status:'Active',hqCountry:'Switzerland',hqCity:'Zurich',hqAddr:'Zurich, Switzerland',countries:['Switzerland','Germany','Austria'],agreementEnd:'30/6/2026',branches:[],contacts:[{name:'Hans Mueller',role:'Director',email:'hans@aas.ch',phone:'',tags:['financial','contractual']}]},
+  {id:7,name:'ABN Education',legal:'ABN Education',code:'ABNPK01',status:'Active',hqCountry:'Pakistan',hqCity:'Lahore',hqAddr:'Lahore, Pakistan',countries:['Pakistan'],agreementEnd:'31/3/2027',branches:[],contacts:[{name:'Ahmad Baig',role:'Owner',email:'ahmad@abn.pk',phone:'',tags:['financial','contractual','operational']}]},
+  {id:8,name:'Azent',legal:'Azent Overseas Education',code:'AEDIN01',status:'Active',hqCountry:'India',hqCity:'Ahmedabad',hqAddr:'Ahmedabad, India',countries:['India'],agreementEnd:'31/3/2026',branches:[],contacts:[{name:'Kiran Patel',role:'CEO',email:'kiran@azent.in',phone:'',tags:['financial','contractual']}]},
+  {id:9,name:'AIMS Education',legal:'AIMS Education Group',code:'AGT-1270',status:'Active',hqCountry:'UAE',hqCity:'Dubai',hqAddr:'Dubai, UAE',countries:['UAE','Egypt','Jordan'],agreementEnd:'31/12/2025',branches:[],contacts:[{name:'Omar Hassan',role:'Director',email:'omar@aims.ae',phone:'',tags:['financial','contractual']},{name:'Layla Karimi',role:'Marketing Manager',email:'layla@aims.ae',phone:'',tags:['marketing']}]},
+  {id:10,name:'Amber Education',legal:'Amber Education Services Ltd',code:'AESCN01',status:'Active',hqCountry:'China',hqCity:'Beijing',hqAddr:'Beijing, China',countries:['China'],agreementEnd:'30/9/2026',branches:[],contacts:[{name:'Wei Zhang',role:'CEO',email:'wei@amber.cn',phone:'',tags:['financial','contractual']},{name:'Li Mei',role:'Operations',email:'li@amber.cn',phone:'',tags:['operational']}]},
+];
+
+const visits=[
+  {id:1,day:1,time:'10:00',agentId:1,branch:'Gullberg, Lahore',contact:'Imran',type:'visit',status:'completed',notes:'Strong pipeline confirmed. 12 applications for Jan 2026. Scholarship info for BSc requested. Exploring Faisalabad expansion.'},
+  {id:2,day:1,time:'14:00',agentId:2,branch:'Johar Town, Lahore',contact:'Haris Dhnani',type:'visit',status:'completed',notes:'Focused on foundation programmes. Counsellor training requested. 7 students pipeline for Sep 2026.'},
+  {id:3,day:2,time:'09:30',agentId:4,branch:'DHA, Lahore',contact:'Bilal',type:'visit',status:'completed',notes:'New branch manager since August. Full institution briefing given. Flag for senior support visit in Q1.'},
+];
+
+const notesList=[
+  {id:1,agent:'AECC — Gullberg, Lahore',date:'Thu 2 Oct 2025 · 10:00',preview:'Strong pipeline. 12 applications for Jan 2026…',text:'Strong pipeline confirmed. 12 applications for Jan 2026. Scholarship info for BSc requested. Exploring Faisalabad expansion.\n\nKey points:\n• January 2026 intake: 12 confirmed applications\n• Scholarship brochures needed for BSc programmes\n• Faisalabad expansion — feasibility to explore\n\nFollow-up:\n→ Send scholarship brochures by 10 Oct\n→ Faisalabad feasibility call by end of October'},
+  {id:2,agent:'Times Consultant — Johar Town',date:'Thu 2 Oct 2025 · 14:00',preview:'Foundation programme focus. Training requested…',text:'Good engagement. Foundation programme focus.\nCounsellor training session requested.\n\n• Foundation interest very high\n• New counsellors need training — November webinar\n• 7 confirmed students for Sep 2026'},
+  {id:3,agent:'Edify Group — DHA, Lahore',date:'Fri 3 Oct 2025 · 09:30',preview:'New branch manager since August. Relationship reset…',text:'New branch manager since August. Relationship reset required. Full institution briefing given.\n\nLower expected output this cycle — long-term potential strong.\nFlag for HoD review — Q1 2026 senior support visit.'},
+];
+
+// ═══ STATE ═══
+let activeAgent=null,activeTab='overview',cfCountry='',searchQ='',mailSeg='all';
+const selMail=new Set();
+
+const tagCls={financial:'tag-terra',contractual:'tag-sienna',operational:'tag-teal',marketing:'tag-gold'};
+const tagLbl={financial:'💰 Financial',contractual:'📄 Contractual',operational:'⚙️ Operational',marketing:'📢 Marketing'};
+
+// ═══ AGENTS ═══
+function renderList(){
+  const q=searchQ.toLowerCase();
+  const list=agents.filter(a=>{
+    const mq=!q||a.name.toLowerCase().includes(q)||a.code.toLowerCase().includes(q)||(a.contacts[0]&&a.contacts[0].name.toLowerCase().includes(q));
+    const mc=!cfCountry||a.countries.includes(cfCountry)||a.hqCountry===cfCountry;
+    return mq&&mc;
+  });
+  document.getElementById('alp-count').textContent=`${list.length} agent${list.length!==1?'s':''}`;
+  document.getElementById('agent-list').innerHTML=list.map(a=>`
+    <div class="agent-row${activeAgent&&activeAgent.id===a.id?' active':''}" onclick="selectAgent(${a.id})">
+      <div class="ar-av">${a.name.substring(0,2)}</div>
+      <div style="flex:1;min-width:0">
+        <div class="ar-name">${a.name}</div>
+        <div class="ar-sub">${a.code} · ${a.hqCity||a.hqCountry}</div>
+      </div>
+      <div class="ar-right">
+        <div class="ar-country">${a.hqCountry}</div>
+        ${a.branches.length?`<div class="ar-branch">${a.branches.length} branch${a.branches.length>1?'es':''}</div>`:''}
+      </div>
+    </div>`).join('');
+}
+function filterAgents(){searchQ=document.getElementById('asearch').value;renderList();}
+function setCF(c,el){cfCountry=c;document.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));el.classList.add('on');renderList();}
+
+function selectAgent(id){
+  activeAgent=agents.find(a=>a.id===id);activeTab='overview';
+  renderList();
+  document.getElementById('adp-empty').style.display='none';
+  const inn=document.getElementById('adp-inner');inn.style.display='flex';inn.style.flexDirection='column';inn.style.flex='1';inn.style.overflow='hidden';
+  renderAgentDetail();
+  document.getElementById('bc').innerHTML=`<span class="bc-link" onclick="clearAgent()">Agents</span><span class="bc-sep"> › </span><span class="bc-cur">${activeAgent.name}</span>`;
+}
+function clearAgent(){
+  activeAgent=null;
+  document.getElementById('adp-empty').style.display='flex';
+  document.getElementById('adp-inner').style.display='none';
+  document.getElementById('bc').innerHTML='<span class="bc-cur">Agents</span>';
+  renderList();
+}
+function setTab(t,el){activeTab=t;document.querySelectorAll('.adp-tab').forEach(x=>x.classList.remove('active'));el.classList.add('active');renderAgentBody();}
+
+function renderAgentDetail(){
+  const a=activeAgent;
+  document.getElementById('adp-hd').innerHTML=`
+    <div style="flex:1">
+      <div class="adp-name">${a.name}</div>
+      <div class="adp-legal">${a.legal}</div>
+      <div class="adp-meta">
+        <span class="tag tag-teal">✓ Active</span>
+        <span class="tag tag-brown">📍 ${a.hqCountry}</span>
+        <span class="tag tag-brown">${a.code}</span>
+        <span class="tag tag-brown">Until ${a.agreementEnd}</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:flex-start">
+      <button class="btn btn-outline btn-sm" onclick="switchView('mail',document.querySelectorAll('.nav-btn')[3])">✉️ Mail</button>
+      <button class="btn btn-primary btn-sm" onclick="switchView('itinerary',document.querySelectorAll('.nav-btn')[1])">✈️ Plan Visit</button>
+    </div>`;
+  renderAgentBody();
+}
+
+function renderAgentBody(){
+  const a=activeAgent;
+  const body=document.getElementById('adp-body');
+  if(activeTab==='overview'){
+    body.innerHTML=`
+      <div class="info-grid">
+        <div class="info-card"><div class="ic-label">HQ Country</div><div class="ic-val">${a.hqCountry}</div></div>
+        <div class="info-card"><div class="ic-label">HQ City</div><div class="ic-val">${a.hqCity||'—'}</div></div>
+        <div class="info-card full"><div class="ic-label">Address</div><div class="ic-val" style="font-size:13px">${a.hqAddr}</div></div>
+        <div class="info-card"><div class="ic-label">Agreement Ends</div><div class="ic-val">${a.agreementEnd}</div></div>
+        <div class="info-card"><div class="ic-label">Branches</div><div class="ic-val" style="color:var(--teal)">${a.branches.length||'None'}</div></div>
+      </div>
+      <div class="sec-hd">Countries of Operation <span>${a.countries.length} countries</span></div>
+      <div class="cstrip">${a.countries.map(c=>`<span class="ctag">🌐 ${c}</span>`).join('')}</div>`;
+  } else if(activeTab==='branches'){
+    body.innerHTML=`<div class="sec-hd">Branches <span>${a.branches.length} office${a.branches.length!==1?'s':''}</span></div>`+
+      (a.branches.length?a.branches.map(b=>`
+        <div class="branch-card">
+          <div class="bc-top">
+            <div><div class="bc-name">${b.name}</div><div class="bc-loc">📍 ${b.city}, ${b.country}</div></div>
+            <div style="display:flex;gap:6px">
+              ${b.maps?`<a href="${b.maps}" target="_blank" class="btn btn-outline btn-xs">🗺 Map</a>`:''}
+              <button class="btn btn-outline btn-xs" onclick="switchView('itinerary',document.querySelectorAll('.nav-btn')[1])">✈️ Visit</button>
+            </div>
+          </div>
+          <div class="bc-contact">
+            <div class="bc-cav">${b.contact[0]||'?'}</div>
+            <div><div class="bc-cname">${b.contact}</div><div class="bc-crole">${b.role}${b.email?` · <a href="mailto:${b.email}" style="color:var(--teal)">${b.email}</a>`:''}</div></div>
+          </div>
+        </div>`).join(''):
+      `<div style="text-align:center;padding:40px;color:var(--brown3)"><div style="font-size:32px;margin-bottom:10px;opacity:.3">🏢</div>No branches on record.<br><button class="btn btn-outline btn-sm" style="margin-top:12px">+ Add Branch</button></div>`);
+  } else {
+    body.innerHTML=`<div class="sec-hd">Contacts <span>${a.contacts.length} people</span></div>`+
+      a.contacts.map(c=>`
+        <div class="contact-card">
+          <div class="cc-av">${c.name.split(' ').map(w=>w[0]).join('').substring(0,2)}</div>
+          <div style="flex:1;min-width:0">
+            <div class="cc-name">${c.name}</div>
+            <div class="cc-role">${c.role}</div>
+            ${c.email?`<div class="cc-email">${c.email}</div>`:''}
+            <div class="cc-tags">${c.tags.map(t=>`<span class="tag ${tagCls[t]||'tag-brown'}">${tagLbl[t]||t}</span>`).join('')}</div>
+          </div>
+          ${c.email?`<button class="btn btn-outline btn-xs" onclick="switchView('mail',document.querySelectorAll('.nav-btn')[3])">✉️</button>`:''}
+        </div>`).join('');
+  }
+}
+
+// ═══ ITINERARY ═══
+function renderTimeline(){
+  const byDay={};
+  visits.forEach(v=>{if(!byDay[v.day])byDay[v.day]=[];byDay[v.day].push(v);});
+  const dn={1:'Thursday, 2 Oct',2:'Friday, 3 Oct'};
+  const tc={visit:'vb-visit',fair:'vb-fair',dinner:'vb-dinner'};
+  const tl={visit:'Agent Visit',fair:'Education Fair',dinner:'Dinner'};
+  document.getElementById('timeline').innerHTML=Object.keys(byDay).map(d=>`
+    <div class="day-block">
+      <div class="day-hd">
+        <div class="day-num">D${d}</div>
+        <div><span class="day-label">Day ${d}</span><span class="day-date"> — ${dn[d]}</span></div>
+      </div>
+      ${byDay[d].map(v=>{const a=agents.find(x=>x.id===v.agentId)||{name:'Unknown'};return `
+        <div class="visit-block">
+          <div class="vb-top">
+            <span class="vb-time">${v.time}</span>
+            <span class="vb-type ${tc[v.type]||'vb-visit'}">${tl[v.type]||v.type}</span>
+            <span class="tag tag-teal" style="margin-left:auto">✓ ${v.status}</span>
+          </div>
+          <div class="vb-agent">${a.name}</div>
+          <div class="vb-branch">📍 ${v.branch} · ${v.contact}</div>
+          <div class="vb-notes">${v.notes}</div>
+          <div class="vb-actions">
+            <button class="btn btn-outline btn-xs" onclick="switchView('notes',document.querySelectorAll('.nav-btn')[2])">📝 Notes</button>
+            <button class="btn btn-outline btn-xs">🗺 Map</button>
+            <button class="btn btn-outline btn-xs">✏️ Edit</button>
+          </div>
+        </div>`;}).join('')}
+      <div class="add-stop">+ Add stop to Day ${d}</div>
+    </div>`).join('');
+}
+
+function renderBranchPicker(){
+  const branches=[{n:'AECC',b:'Gullberg, Lahore',d:'0.8km'},{n:'Edvoy',b:'Gullberg, Lahore',d:'0.8km'},{n:'Times Consultant',b:'Johar Town',d:'3.2km'},{n:'Edify Group',b:'DHA, Lahore',d:'4.1km'},{n:'Edvoy',b:'I8, Islamabad',d:'280km'}];
+  document.getElementById('branch-picker').innerHTML=branches.map(b=>`
+    <div class="bp-item" onclick="this.classList.toggle('sel');this.querySelector('.bp-check').textContent=this.classList.contains('sel')?'✓':''">
+      <div class="bp-check"></div>
+      <div><div class="bp-name">${b.n}</div><div class="bp-loc">📍 ${b.b}</div></div>
+      <span class="dist-badge">${b.d}</span>
+    </div>`).join('');
+}
+
+// ═══ NOTES ═══
+function renderNotes(){
+  document.getElementById('notes-list').innerHTML=notesList.map((n,i)=>`
+    <div class="note-item${i===0?' active':''}" onclick="selectNote(${n.id},this)">
+      <div class="ni-agent">${n.agent}</div>
+      <div class="ni-date">${n.date}</div>
+      <div class="ni-preview">${n.preview}</div>
+    </div>`).join('');
+  loadNote(notesList[0]);
+}
+function selectNote(id,el){document.querySelectorAll('.note-item').forEach(x=>x.classList.remove('active'));el.classList.add('active');loadNote(notesList.find(n=>n.id===id));}
+function loadNote(n){document.getElementById('ne-title').textContent=n.agent;document.getElementById('ne-meta').textContent=`🤝 Agent Visit · ${n.date}`;document.getElementById('ne-ta').value=n.text;}
+function saveNote(){const b=document.getElementById('save-btn');b.textContent='✓ Saved';b.style.background='var(--teal2)';setTimeout(()=>{b.textContent='Save Notes';b.style.background='';},1600);}
+
+// ═══ MAIL ═══
+function allContacts(){const r=[];agents.forEach(a=>a.contacts.forEach(c=>r.push({...c,agentName:a.name})));return r;}
+function setSeg(s,el){mailSeg=s;document.querySelectorAll('.seg').forEach(x=>x.classList.remove('on'));el.classList.add('on');renderMailContacts();}
+function renderMailContacts(){
+  let cs=allContacts();
+  if(mailSeg!=='all')cs=cs.filter(c=>c.tags.includes(mailSeg));
+  document.getElementById('mail-contacts').innerHTML=cs.map((c,i)=>`
+    <div class="mc-item">
+      <div class="mc-sel${selMail.has(i)?' ck':''}" onclick="toggleSel(${i},this)">${selMail.has(i)?'✓':''}</div>
+      <div class="mc-av">${c.name.split(' ').map(w=>w[0]).join('').substring(0,2)}</div>
+      <div style="flex:1;min-width:0">
+        <div class="mc-name">${c.name}</div>
+        <div class="mc-agent">${c.agentName} · ${c.role}</div>
+        <div class="mc-tags">${c.tags.map(t=>`<span class="tag ${tagCls[t]||'tag-brown'}" style="font-size:10px;padding:2px 7px">${tagLbl[t]||t}</span>`).join('')}</div>
+      </div>
+    </div>`).join('');
+}
+function toggleSel(i,el){if(selMail.has(i)){selMail.delete(i);el.classList.remove('ck');el.textContent='';}else{selMail.add(i);el.classList.add('ck');el.textContent='✓';}document.getElementById('mr-rec').textContent=`${selMail.size} recipient${selMail.size!==1?'s':''} selected`;}
+function updateWarning(){
+  const cat=document.getElementById('mail-cat').value;
+  document.getElementById('mail-warning').innerHTML=cat==='financial'?`<div class="notice notice-terra">⚠️ <div><strong>Restricted.</strong> Only contacts tagged Financial / Contractual will receive this message. Others are automatically excluded.</div></div>`:'';
+}
+
+// ═══ NAV ═══
+function switchView(name,el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const titles={agents:'Agents',itinerary:'Itinerary Planner',notes:'Visit Notes',mail:'Mailing'};
+  const rights={
+    agents:'<button class="btn btn-outline btn-sm">⬆ Import CSV</button><button class="btn btn-primary btn-sm">+ Add Agent</button>',
+    itinerary:'<button class="btn btn-outline btn-sm">📋 Export PDF</button><button class="btn btn-teal btn-sm">✨ Generate AI Report</button>',
+    notes:'<button class="btn btn-primary btn-sm">+ New Note</button>',
+    mail:'<button class="btn btn-terra btn-sm">📋 Sent Log</button>',
+  };
+  document.getElementById('bc').innerHTML=`<span class="bc-cur">${titles[name]||''}</span>`;
+  document.getElementById('tbr').innerHTML=rights[name]||'';
+}
+
+// ═══ INIT ═══
+renderList();renderTimeline();renderBranchPicker();renderNotes();renderMailContacts();
+</script>
+</body>
+</html>
