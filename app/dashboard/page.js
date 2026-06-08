@@ -156,8 +156,9 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* World Map Panel */}
-                {/* Forms */}
+              </div>
+
+              {/* Forms */}
               <div className="slabel" style={{marginTop:24}}>Lead Capture</div>
               <div style={{background:'var(--white)',border:'1px solid var(--border)',borderRadius:12,padding:'16px 20px',display:'flex',alignItems:'center',gap:16,marginBottom:24}}>
                 <div style={{fontSize:32}}>📋</div>
