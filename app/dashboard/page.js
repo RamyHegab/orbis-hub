@@ -157,23 +157,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* World Map Panel */}
-                <div style={{background:'var(--white)',border:'1px solid var(--border)',borderRadius:12,overflow:'hidden',gridColumn:'span 2'}}>
-                  <div className="ph">
-                    <div className="ph-title">🌐 Agent Network — {stats.countries} Countries · {stats.agents} Agents</div>
-                    <a href="/agents" className="ph-link">View agents →</a>
-                  </div>
-                  <div style={{padding:'16px',display:'flex',flexWrap:'wrap',gap:6}}>
-                    {['China','India','Pakistan','Nigeria','UAE','Bangladesh','Egypt','Ghana','Vietnam','Malaysia','Saudi Arabia','Kenya','Turkey','Indonesia','Nepal','Sri Lanka','Jordan','Morocco','Algeria','Iraq','Iran','Qatar','Kuwait','Oman','Bahrain','Lebanon','Libya','Tunisia','Yemen','Uganda','Tanzania','Zambia','Zimbabwe','Angola','Cameroon','South Africa','Botswana','Malawi','Guinea','Spain','Italy','France','Germany','Portugal','Greece','Poland','Romania','Cyprus','Kazakhstan','Uzbekistan','Canada','USA','Mexico','Colombia','Brazil','Argentina','Chile','Peru','Venezuela','Australia','Singapore','Hong Kong','Taiwan','South Korea','Japan','Philippines','Thailand','Cambodia','Myanmar','Laos','Brunei','UK International'].map(c => (
-                      <span key={c} style={{padding:'3px 9px',borderRadius:20,fontSize:11,fontWeight:500,background:'var(--teal-bg)',color:'var(--teal)',border:'1px solid var(--teal3)'}}>
-                        🌐 {c}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Forms */}
+                {/* Forms */}
               <div className="slabel" style={{marginTop:24}}>Lead Capture</div>
               <div style={{background:'var(--white)',border:'1px solid var(--border)',borderRadius:12,padding:'16px 20px',display:'flex',alignItems:'center',gap:16,marginBottom:24}}>
                 <div style={{fontSize:32}}>📋</div>
